@@ -1,0 +1,264 @@
+/* Dress Up Math design system — shared visual tokens and reusable components. */
+:root {
+  --ds-page: #fffaf1;
+  --ds-surface: #fffdf9;
+  --ds-rose: #f05180;
+  --ds-rose-deep: #842143;
+  --ds-yellow: #fff0ad;
+  --ds-yellow-edge: #d8972b;
+  --ds-green: #dcecae;
+  --ds-green-edge: #759d3d;
+  --ds-plum: #512033;
+  --ds-line: #9b214a;
+  --ds-radius-lg: 28px;
+  --ds-radius-md: 18px;
+  --ds-shadow: 0 5px 0 rgba(132, 33, 67, .16), 0 13px 28px rgba(81, 32, 51, .08);
+}
+
+body { background: var(--ds-page); color: var(--ds-plum); }
+button { font-family: Nunito, "Trebuchet MS", sans-serif; }
+
+/* Header */
+.site-header { max-width: 1480px; padding: 22px 34px 15px; border-bottom: 2px solid var(--ds-line); }
+.site-header .brand-copy { display: none; }
+.site-header .brand img { width: 155px; height: 155px; margin: -50px 0 -53px -10px; object-fit: contain; border-radius: 0; }
+.site-header .header-actions { gap: 17px; }
+.score { display: inline-flex; align-items: center; gap: 9px; min-height: 56px; padding: 7px 21px; border: 2px solid var(--ds-line); border-radius: 999px; background: var(--ds-yellow); box-shadow: 0 3px 0 rgba(132, 33, 67, .12); }
+.score img { width: 34px; height: 34px; }
+.score-copy b { font: 900 28px/1 Nunito, sans-serif; color: var(--ds-plum); }
+#settings { display: grid; width: 56px; height: 56px; padding: 0; place-items: center; border: 2px solid var(--ds-line); border-radius: 16px; background: var(--ds-surface); box-shadow: none; }
+
+/* Activity tabs */
+main { max-width: 1480px; margin: 22px auto 56px; padding: 0 34px; }
+#modes { display: flex; width: min(840px, 100%); gap: 0; padding: 0; margin: 0 0 22px; border: 0; outline: 0; border-radius: 20px; background: transparent; }
+#modes .mode { min-height: 74px; justify-content: center; gap: 11px; margin: 0; padding: 11px 22px; border: 2px solid var(--ds-line); border-radius: 20px; background: var(--ds-yellow); color: var(--ds-plum); box-shadow: 0 4px 0 rgba(132, 33, 67, .12); }
+#modes .mode + .mode { margin-left: -2px; }
+#modes .mode[data-mode="fraction"] { background: #ecf2c7; }
+#modes .mode.active { background: var(--ds-rose); color: white; box-shadow: inset 0 0 0 1px rgba(255,255,255,.26), 0 4px 0 rgba(132, 33, 67, .18); }
+#modes .mode.active .mode-icon { background: transparent; box-shadow: none; }
+#modes .mode b { font: 900 clamp(18px, 2.2vw, 27px)/1 Nunito, sans-serif; }
+.mode-icon { width: 42px; height: 42px; border-radius: 0; background: transparent; }
+.mode-icon img { width: 100%; height: 100%; }
+
+/* Main dashboard */
+main .layout { grid-template-columns: minmax(0, 1fr) minmax(320px, 35%); gap: 24px; align-items: stretch; }
+.game, .wardrobe { overflow: hidden; border: 2px solid var(--ds-line); border-radius: var(--ds-radius-lg); background: var(--ds-surface); box-shadow: var(--ds-shadow); }
+.game-top { display: none; }
+.play { min-height: 610px; padding: 38px 30px 26px; }
+.exercise-layout { grid-template-columns: minmax(0, 1fr) minmax(255px, 34%); align-items: center; gap: 24px; margin: 0; }
+.exercise-main { min-width: 0; padding: 28px 24px 20px; border: 2px solid var(--ds-line); border-radius: 24px; background: linear-gradient(180deg, #fffdfb, #fff8f9); }
+
+/* Answer fields, sums and fractions */
+.exercise-main .equation { min-height: 205px; margin: 0 0 18px; font: 900 clamp(45px, 6vw, 74px)/1 Nunito, sans-serif; color: var(--ds-plum); }
+.exercise-main .equation input, .answer { border: 3px dashed var(--ds-rose); border-radius: 19px; background: #fff8f6; color: var(--ds-plum); box-shadow: none; }
+.exercise-main .equation input { width: 130px; min-height: 112px; padding: 5px; font: inherit; }
+.sumboard { margin: 0 auto 18px; color: var(--ds-plum); }
+.sumboard input { border: 2px solid var(--ds-rose); border-radius: 14px; background: #fff8f6; color: var(--ds-plum); }
+.carry { border: 2px solid var(--ds-yellow-edge); border-radius: 14px; background: var(--ds-yellow); color: var(--ds-plum); box-shadow: 0 3px 0 rgba(216, 151, 43, .25); }
+.carry[aria-pressed=true] { background: var(--ds-yellow); }
+.fraction-exercise { min-height: 205px; padding: 14px; border-radius: 22px; background: #fffdfb; }
+.fraction-input input { border: 3px dashed var(--ds-rose); border-radius: 16px; background: #fff8f6; color: var(--ds-plum); }
+
+/* Keypad and actions */
+.keypad { gap: 9px; padding: 12px; border: 0; border-radius: 22px; background: transparent; }
+.keypad button { min-height: 63px; border: 2px solid var(--ds-green-edge); border-radius: 17px; background: var(--ds-green); box-shadow: 0 4px 0 rgba(117, 157, 61, .18); color: var(--ds-plum); font: 900 clamp(24px, 3vw, 39px)/1 Nunito, sans-serif; }
+.keypad button[data-key="erase"] { border-color: var(--ds-line); background: #fff1f3; color: var(--ds-rose-deep); }
+.exercise-actions { display: flex; flex-direction: column; align-items: center; width: min(100%, 310px); margin: 0 auto; gap: 15px; }
+.exercise-actions .primary { width: 100%; min-height: 68px; border-radius: 21px; background: var(--ds-rose); box-shadow: 0 5px 0 rgba(132, 33, 67, .28); color: white; font: 900 28px/1 Nunito, sans-serif; }
+.help-control { display: flex; align-items: center; justify-content: center; gap: 13px; min-height: 58px; }
+.exercise-actions .help { display: grid; width: 57px; height: 57px; min-height: 57px; padding: 0; place-items: center; border: 2px solid var(--ds-yellow-edge); border-radius: 50%; background: var(--ds-yellow); box-shadow: 0 4px 0 rgba(216,151,43,.2); }
+.exercise-actions .help img { width: 31px; height: 31px; }
+.exercise-actions .help-unavailable { background: #ece9df; border-color: #cdc9ba; box-shadow: none; }
+.exercise-actions .help-unavailable img { opacity: .45; filter: grayscale(1); }
+.help-meter { display: flex; align-items: center; gap: 10px; margin: 0; }
+.help-dots { display: inline-flex; align-items: center; gap: 7px; }
+.help-dot { width: 19px; height: 19px; border: 0; border-radius: 50%; background: #dde9d5; }
+.help-dot.filled { background: var(--ds-rose); }
+.help-meter-label { font: 900 20px/1 Nunito, sans-serif; color: var(--ds-plum); }
+#feedback { min-height: 30px; margin: 17px 0 0; font-weight: 900; }
+
+/* Wardrobe panel */
+.layout .wardrobe { display: flex; flex-direction: column; padding: 13px; }
+.wardrobe-heading { margin: 0; padding: 16px 14px; border-radius: 17px 17px 8px 8px; background: var(--ds-rose); color: white; font: 900 30px/1 Nunito, sans-serif; text-align: center; }
+.layout .doll-scene { flex: 1; display: grid; align-items: end; margin: 0; padding: 18px 18px 0; border: 0; border-radius: 49% 49% 22px 22px / 23% 23% 8px 8px; background: #fce5eb; }
+.wardrobe .layered-doll { height: clamp(420px, 52vw, 610px); max-height: 610px; }
+#closet { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 68px; margin-top: 13px; border: 2px solid var(--ds-green-edge); border-radius: 20px; background: var(--ds-green); color: var(--ds-plum); font: 900 25px/1 Nunito, sans-serif; }
+#closet img { width: 31px; height: 31px; }
+
+/* Shared modal, settings, report and closet treatment */
+.modal { z-index: 100; padding: 20px; background: rgba(81, 32, 51, .32); }
+.dialog { width: min(1200px, 96vw); max-height: 93vh; padding: 28px; border: 2px solid var(--ds-line); border-radius: var(--ds-radius-lg); background: var(--ds-surface); box-shadow: 0 24px 80px rgba(47, 14, 27, .34); }
+.dialog-top { padding-bottom: 15px; border-bottom: 2px solid #f0ccd5; }
+.dialog-top h2 { font: 900 clamp(27px, 3vw, 42px)/1 Nunito, sans-serif; color: var(--ds-plum); }
+.close { border: 2px solid var(--ds-line); background: #fff1f4; color: var(--ds-rose-deep); }
+.dialog .primary { border-radius: 18px; background: var(--ds-rose); font-weight: 900; }
+.dialog .secondary { border: 2px solid #e7cbd3; border-radius: 18px; background: #fff7f8; color: var(--ds-plum); font-weight: 900; }
+.settings-group { padding: 18px; border-radius: var(--ds-radius-md); background: #fff6f7; }
+.table-option { border: 2px solid #f2ccd6; border-radius: 14px; background: var(--ds-surface); }
+.settings-group input[type=checkbox] { accent-color: var(--ds-rose); }
+.report-summary > div { border-radius: var(--ds-radius-md); background: #fff0f4; }
+.report-table thead { background: #ffe7ed; }
+.stage { border: 2px solid #f1d4dc; border-radius: 22px; background: #fff8fa; }
+.closet-prover { border-radius: 35px 35px 15px 15px; background: #fce5eb; }
+.closet-tabs button, .worn-pieces button, .closet-controls .wardrobe-icon-button { border: 2px solid #f0c7d3; border-radius: 15px; background: #fff8fa; }
+.closet-controls #undress { border-color: var(--ds-yellow-edge); background: var(--ds-yellow); }
+
+@media (max-width: 840px) {
+  .site-header { padding: 14px 16px 10px; }
+  .site-header .brand img { width: 115px; height: 115px; margin: -35px 0 -40px -6px; }
+  main { margin-top: 14px; padding: 0 14px; }
+  #modes { width: 100%; }
+  #modes .mode { min-height: 62px; padding: 8px; gap: 5px; }
+  #modes .mode b { font-size: 16px; }
+  .mode-icon { width: 34px; height: 34px; }
+  main .layout { grid-template-columns: 1fr; }
+  .play { min-height: 0; padding: 18px 12px; }
+  .exercise-layout { grid-template-columns: minmax(0, 1fr) minmax(150px, 37%); gap: 10px; }
+  .exercise-main { padding: 14px 9px; }
+  .exercise-main .equation { min-height: 150px; font-size: clamp(33px, 9vw, 58px); }
+  .exercise-main .equation input { width: 83px; min-height: 79px; }
+  .keypad button { min-height: 47px; }
+  .wardrobe .layered-doll { height: min(115vw, 540px); }
+}
+
+/* v33 layout refinements — all activities share the same components. */
+.site-header .brand img {
+  width: 252px;
+  height: 156px;
+  margin: -31px 0 -35px -20px;
+  object-fit: contain;
+  border-radius: 0;
+  background: transparent;
+}
+
+/* The activity ribbon starts at the same edge as the exercise card. */
+#modes {
+  position: relative;
+  width: calc(65% - 8px);
+  max-width: none;
+  min-width: 620px;
+  margin-bottom: 22px;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  overflow: visible;
+}
+#modes::before, #modes::after,
+.wardrobe-heading::before, .wardrobe-heading::after {
+  position: absolute;
+  width: 35px;
+  height: 38px;
+  content: "";
+  background: linear-gradient(72deg, transparent 0 17%, #ff6895 18% 28%, transparent 29% 43%, #ff6895 44% 54%, transparent 55% 69%, #ff6895 70% 80%, transparent 81%);
+  background-size: 100% 100%;
+}
+#modes::before { left: -43px; top: 17px; transform: rotate(180deg); }
+#modes::after { right: -43px; top: 17px; }
+#modes .mode {
+  flex: 1 1 0;
+  min-height: 78px;
+  gap: 13px;
+  padding: 11px 20px;
+  border-radius: 22px;
+}
+#modes .mode b { font-size: clamp(22px, 2.1vw, 31px); }
+.mode-icon { width: 50px; height: 50px; }
+.mode-icon img { width: 100%; height: 100%; object-fit: contain; }
+
+/* A consistent framed answer area keeps multiplication, sums and fractions recognisable. */
+.exercise-main { position: relative; min-height: 455px; padding: 26px 22px 17px; }
+.exercise-main::before, .exercise-main::after {
+  position: absolute;
+  width: 33px;
+  height: 33px;
+  content: "";
+  background: linear-gradient(72deg, transparent 0 17%, #ff6895 18% 28%, transparent 29% 43%, #ff6895 44% 54%, transparent 55% 69%, #ff6895 70% 80%, transparent 81%);
+}
+.exercise-main::before { left: 24px; top: 28px; transform: rotate(180deg); }
+.exercise-main::after { right: 20px; bottom: 28px; }
+.exercise-main .equation {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 230px;
+  font-size: clamp(35px, 4.7vw, 63px);
+  white-space: nowrap;
+}
+.exercise-main .equation input {
+  width: clamp(84px, 9vw, 108px);
+  min-height: clamp(76px, 9vw, 98px);
+  flex: 0 0 auto;
+}
+.exercise-actions { margin-top: 0; }
+.help-control { padding-top: 12px; }
+
+/* The fitting-room heading reuses the game's ribbon language. */
+.wardrobe-heading {
+  position: relative;
+  z-index: 0;
+  padding: 16px 18px 11px;
+  background: transparent;
+  overflow: visible;
+}
+.wardrobe-heading span {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  min-width: 72%;
+  padding: 13px 28px;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #fa7198, var(--ds-rose));
+  box-shadow: 0 4px 0 rgba(132, 33, 67, .2);
+}
+.wardrobe-heading::before { left: 15px; top: 26px; transform: rotate(180deg); }
+.wardrobe-heading::after { right: 15px; top: 26px; background-image: linear-gradient(72deg, transparent 0 17%, #78a943 18% 28%, transparent 29% 43%, #78a943 44% 54%, transparent 55% 69%, #78a943 70% 80%, transparent 81%); }
+.layout .doll-scene { min-height: 600px; padding: 8px 10px 0; }
+.wardrobe .layered-doll { height: clamp(500px, 57vw, 680px); max-height: 680px; }
+#count { display: none; }
+
+/* Success uses the same ribbon illustration as the fitting-room title. */
+.modal[data-view="reward"] .dialog-top {
+  justify-content: center;
+  position: relative;
+  min-height: 94px;
+  border-bottom: 0;
+}
+.modal[data-view="reward"] .dialog-top h2 {
+  position: relative;
+  margin: 18px 0 0;
+  padding: 13px 46px;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #fa7198, var(--ds-rose));
+  color: white;
+  text-align: center;
+  box-shadow: 0 4px 0 rgba(132, 33, 67, .2);
+}
+.modal[data-view="reward"] .dialog-top h2::before {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  content: "★";
+  color: #ffd449;
+  font-size: 43px;
+  line-height: 1;
+  text-shadow: 0 2px 0 var(--ds-line);
+}
+.modal[data-view="reward"] .dialog-top .close { position: absolute; right: 0; top: 0; }
+.closet-count { margin: 8px 0 0; color: var(--ds-rose-deep); font: 900 15px/1 Nunito, sans-serif; text-align: center; }
+
+@media (max-width: 840px) {
+  .site-header .brand img { width: 164px; height: 104px; margin: -19px 0 -22px -12px; }
+  #modes { width: 100%; min-width: 0; }
+  #modes::before, #modes::after { display: none; }
+  #modes .mode { min-height: 62px; padding: 8px; gap: 7px; }
+  #modes .mode b { font-size: 17px; }
+  .mode-icon { width: 36px; height: 36px; }
+  .exercise-main { min-height: 0; }
+  .exercise-main .equation { min-height: 150px; gap: 6px; font-size: clamp(30px, 8vw, 48px); }
+  .exercise-main .equation input { width: 76px; min-height: 72px; }
+  .layout .doll-scene { min-height: 450px; }
+  .wardrobe .layered-doll { height: min(115vw, 570px); }
+}

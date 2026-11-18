@@ -1,0 +1,603 @@
+/* Figma UI implementation: shared tokens and components.  Wardrobe imagery is intentionally untouched. */
+:root {
+  --f-ink: #63233f;
+  --f-line: #d9a7b7;
+  --f-page: #fffaf4;
+  --f-card: #fffdfa;
+  --f-pink: #e55d88;
+  --f-pink-deep: #af355d;
+  --f-pink-soft: #f9dce4;
+  --f-yellow: #fff1a8;
+  --f-green: #e4efbd;
+  --f-green-edge: #93af4f;
+  --f-shadow: 0 4px 0 rgba(130, 49, 77, .12), 0 16px 36px rgba(130, 49, 77, .08);
+}
+
+body {
+  background:
+    radial-gradient(ellipse 38% 17% at -3% 105%, #f8d8e1 0 33%, transparent 34%),
+    radial-gradient(ellipse 35% 16% at 103% 104%, #f8d8e1 0 33%, transparent 34%),
+    var(--f-page);
+  color: var(--f-ink);
+}
+
+/* Header is the same reusable bar on every page and dialog. */
+.site-header {
+  max-width: none;
+  min-height: 142px;
+  margin: 0;
+  padding: 16px clamp(28px, 4vw, 62px);
+  border-bottom: 2px solid var(--f-line);
+  background: linear-gradient(180deg, #fff8f1 0%, #f8dde0 40%, #f5cbd3 100%);
+}
+.header-top { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; min-height: 107px; }
+.site-header .brand { grid-column: 2; grid-row: 1; justify-self: center; }
+.site-header .brand img { width: 397px; height: 133px; margin: 0; object-fit: contain; }
+.site-header .header-actions { display: contents; }
+.header-score-group { grid-column: 1; grid-row: 1; justify-self: start; }
+#settings { grid-column: 3; grid-row: 1; justify-self: end; width: 62px; height: 62px; border-color: var(--f-line); border-radius: 18px; background: rgba(255,255,255,.86); box-shadow: var(--f-shadow); }
+#settings img { width: 35px; height: 35px; }
+.score { min-height: 62px; padding: 8px 22px 8px 12px; border-color: #c78a56; border-radius: 23px; background: linear-gradient(180deg, #fff8cf, #ffe891); box-shadow: 0 4px 0 rgba(167,113,65,.16); }
+.score img { width: 40px; height: 40px; }
+.score-copy b { font-size: 31px; color: var(--f-ink); }
+
+main { max-width: 1448px; margin: 0 auto; padding: 28px clamp(20px, 3.5vw, 52px) 52px; }
+#modes { width: calc(66.7% - 17px); min-width: 0; margin: 0 0 17px; gap: 10px; }
+#modes .mode, #modes .mode + .mode { min-height: 76px; margin: 0; padding: 10px 20px; border: 2px solid var(--f-line); border-radius: 22px; background: #f7e3e8; box-shadow: none; color: var(--f-ink); }
+#modes .mode.active { background: var(--f-card); color: var(--f-ink) !important; box-shadow: 0 5px 0 rgba(170, 80, 113, .12); }
+#modes .mode.active b { color: var(--f-ink) !important; }
+#modes .mode[data-mode="multiply"] .mode-icon { background:#ddecbb; }
+#modes .mode[data-mode="add"] .mode-icon { background:#f9d8e3; }
+#modes .mode[data-mode="fraction"] .mode-icon { background:#eee1f4; }
+#modes .mode.active .mode-icon { box-shadow: none; }
+.mode-icon { width: 48px; height: 48px; border-radius: 50%; padding: 6px; }
+.mode-icon img { width: 100%; height: 100%; }
+#modes .mode b { font-size: clamp(22px, 2vw, 29px); }
+#modes::before, #modes::after { top: 19px; }
+#modes::before, #modes::after { display:none; }
+.wardrobe-heading::before { width: 42px; height: 51px; background: url("assets/figma-icons/spark_green_L.png") center / contain no-repeat; }
+.wardrobe-heading::after { width: 42px; height: 51px; background: url("assets/figma-icons/spark_green_R.png") center / contain no-repeat; }
+
+main .layout { grid-template-columns: minmax(0, 2.05fr) minmax(310px, .93fr); gap: 26px; align-items: start; }
+.game, .wardrobe { border: 2px solid var(--f-line); border-radius: 31px; background: var(--f-card); box-shadow: none; }
+.play { min-height: 0; padding: 36px 28px 21px; }
+.exercise-layout { grid-template-columns: minmax(300px, 1.32fr) minmax(230px, .83fr); align-items: center; gap: 20px; }
+.exercise-main { min-height: 365px; padding: 24px 18px 13px; border-color: var(--f-line); border-radius: 28px; background: linear-gradient(145deg, #fffefa, #fff8f9); }
+.exercise-main::before, .exercise-main::after { opacity: .86; }
+.exercise-main::before { width:49px; height:56px; background:url("assets/figma-icons/spark_pink_L.png") center / contain no-repeat; }
+.exercise-main::after { width:49px; height:56px; background:url("assets/figma-icons/spark_pink_R.png") center / contain no-repeat; }
+.exercise-main .equation { min-height: 220px; margin: 0; gap: 11px; font-size: clamp(40px, 4.65vw, 68px); }
+.exercise-main .equation input, .answer, .fraction-input input {
+  border: 3px dashed var(--f-pink);
+  border-radius: 17px;
+  background: #fffafa;
+  color: var(--f-ink);
+  box-shadow: none;
+}
+.exercise-main .equation input { width: clamp(85px, 10vw, 111px); min-height: clamp(78px, 9vw, 102px); }
+.answer.answer-active { outline: 3px solid #ffe28b; outline-offset: 2px; }
+.sumboard { margin: 4px auto; }
+.sumboard input { border: 3px dashed var(--f-pink); border-radius: 15px; background: #fffafa; }
+.carry { border: 2px solid #d8a24b; border-radius: 14px; background: #fff0a4; color: var(--f-ink); box-shadow: 0 3px 0 rgba(202,145,58,.2); }
+.fraction-exercise { min-height: 260px; padding: 8px 10px; background: transparent; }
+.fraction-exercise .pizza { width: min(255px, 76%); margin: 8px auto; }
+.fraction-input { width: 91px; grid-template-rows: 66px 3px 66px; }
+.fraction-input input { width: 91px; font-size: 37px; }
+
+.keypad { gap: 9px; padding: 5px; }
+.keypad button { min-height: 67px; border: 2px solid #a9b670; border-radius: 16px; background: linear-gradient(150deg,#fcffdc,#e7efb7); box-shadow: 0 3px 0 rgba(104,129,50,.16); font-size: clamp(25px, 3vw, 40px); }
+.keypad button[data-key="erase"] { border-color: var(--f-line); background:#fff4f5; }
+.exercise-actions { align-items: flex-start; width: 100%; margin: 0; }
+.exercise-actions .primary { display:flex; align-items:center; justify-content:center; gap:13px; width: min(100%, 345px); min-height: 72px; border: 2px solid var(--f-pink-deep); border-radius: 22px; background: linear-gradient(180deg,#f679a1,#e95381); box-shadow: 0 5px 0 rgba(139,41,79,.25); font-size: 28px; }
+.exercise-actions .primary::before { content: "✓"; display: inline-grid; width: 36px; height: 36px; margin-right: 13px; place-items: center; border: 3px solid white; border-radius: 50%; font-size: 24px; vertical-align: -2px; }
+.help-control { position: relative; width: 100%; justify-content: center; gap: 12px; min-height: 76px; margin-top: 16px; padding-top: 13px; border-top: 2px solid #efc0ce; }
+.exercise-actions .help { width: 61px; height: 61px; min-height: 61px; border-color:#d6a449; background: linear-gradient(180deg,#fff7bd,#ffe690); }
+.exercise-actions .help img { width: 35px; height: 35px; }
+.help-meter { gap: 9px; }
+.help-dot { width: 22px; height: 22px; border: 1.5px solid #a4ba58; background:#e6edc8; }
+.help-dot.filled { border-color:#db3769; background:#f35e8a; }
+.help-meter-label { font-size: 23px; }
+#feedback { min-height: 20px; margin: 6px 0 0; }
+
+/* Fitting room: only its UI container changes; the doll and all item images stay intact. */
+.layout .wardrobe { padding: 14px; }
+.wardrobe-heading { padding: 12px 12px 8px; }
+.wardrobe-heading span { display:grid; width:min(80%, 520px); min-width:0; height:auto; aspect-ratio:272 / 72; margin-inline:auto; padding:0 12%; place-items:center; border-radius:0; background:url("assets/ribbon-shape.svg") center / 100% 100% no-repeat; font-size:30px; }
+.wardrobe-heading::before, .wardrobe-heading::after { top: 22px; }
+.layout .doll-scene { min-height: 590px; padding: 2px 5px 0; background: #f9dce6; border-radius: 49% 49% 21px 21px / 25% 25% 9px 9px; }
+.wardrobe .layered-doll { height: clamp(500px, 45vw, 655px); max-height: 655px; }
+#closet { min-height: 69px; margin-top: 14px; border-color: #9fb158; border-radius: 22px; background: linear-gradient(180deg,#f7facb,#e3efad); box-shadow:0 4px 0 rgba(110,142,59,.15); font-size: 25px; }
+#closet img { width: 34px; height: 34px; }
+
+/* Dialog shell shared by help, closet, settings, report and rewards. */
+.modal { z-index: 1000; background: rgba(78,28,47,.4); }
+.dialog { width: min(1120px, 96vw); max-height: 94vh; padding: 0 28px 24px; border-color: var(--f-line); border-radius: 30px; background: var(--f-card); }
+.dialog-top { position: relative; display:flex; min-height: 82px; margin:0 -28px 20px; padding: 18px 92px 15px; align-items:center; justify-content:center; border-bottom:2px solid var(--f-line); background:linear-gradient(180deg,#fff6cf,#ffedaa); }
+.dialog-top h2 { margin:0; color:var(--f-ink); font-size:clamp(29px,3vw,43px); }
+.dialog-top h2::before { display:inline-grid; width:48px; height:48px; margin-right:15px; place-items:center; border-radius:0; color:var(--f-pink-deep); vertical-align:-10px; }
+.modal[data-view="closet"] .dialog-top h2::before { content:""; background:url("assets/figma-closet.png") center / contain no-repeat; }
+.modal[data-view="settings"] .dialog-top h2::before { content:""; background:url("assets/figma-gear.png") center / contain no-repeat; }
+.modal[data-view="report"] .dialog-top h2::before { content:""; background:url("assets/figma-icons/bars.png") center / contain no-repeat; }
+.modal[data-view="help"] .dialog-top h2::before { content:""; background:url("assets/figma-bulb.png") center / contain no-repeat; }
+.modal[data-view="help"] .dialog-top h2 { display:flex; align-items:center; justify-content:center; gap:15px; }
+.modal[data-view="help"] .dialog-top h2::before { flex:0 0 48px; margin-right:0; vertical-align:baseline; }
+.modal[data-view="help-empty"] .dialog-top h2 { display:flex; align-items:center; justify-content:center; gap:15px; white-space:nowrap; }
+.modal[data-view="help-empty"] .dialog-top h2::before { content:""; flex:0 0 48px; margin-right:0; background:url("assets/figma-bulb.png") center / contain no-repeat; }
+.close { position:absolute; top:16px; right:24px; width:47px; height:47px; border:2px solid var(--f-line); border-radius:50%; background:#fff6f7; color:var(--f-ink); font-size:32px; }
+.dialog .primary { border: 2px solid var(--f-pink-deep); border-radius: 20px; background:linear-gradient(180deg,#f679a1,#df4e7d); box-shadow:0 4px 0 rgba(139,41,79,.2); }
+.dialog .secondary { border:2px solid var(--f-line); border-radius:18px; background:#fff7f8; color:var(--f-ink); }
+
+/* Wardrobe modal continues to show the doll while browsing. */
+.modal[data-view="closet"] .dialog { width:min(1360px,96vw); height:min(890px,94vh); }
+.modal[data-view="closet"] .dialog-top { margin-bottom:14px; }
+.modal[data-view="closet"] .dialog-top h2 { display:flex; align-items:center; justify-content:center; gap:15px; }
+.modal[data-view="closet"] .dialog-top h2::before { flex:0 0 48px; margin-right:0; vertical-align:baseline; }
+.closet-tabs { display:grid; grid-template-columns:repeat(10, minmax(0,1fr)); gap:8px; width:100%; padding-bottom:10px; border-bottom:1px solid #edcfda; }
+.closet-tabs button, .closet-controls .wardrobe-icon-button { width:100%; height:58px; border-color:var(--f-line); border-radius:18px; background:#fff9fa; }
+.closet-catalog .closet-tabs button[aria-pressed="true"] { background:#f58aad; box-shadow:inset 0 0 0 2px #d63f70; }
+.closet-tabs button { position:relative; }
+.closet-tabs .category-state { position:absolute; right:-5px; bottom:-5px; display:grid; width:25px; height:25px; place-items:center; border:3px solid #fff9fa; border-radius:50%; background:#fff; color:var(--f-ink); box-shadow:0 1px 0 rgba(99,35,63,.2); font:900 25px/1 Arial,sans-serif; }
+.closet-items { padding:8px 14px 8px 4px; scrollbar-color:#e65d87 #f9dce5; }
+.closet-grid { grid-template-columns:repeat(3, minmax(0,1fr)); gap:13px; }
+.outfit-card { border-color:var(--f-line); border-radius:18px; background:#fff9fa; }
+.outfit-card.selected { outline-color:#ef6e95; }
+.outfit-card.for-sale { border-color:#e0a94f; background:linear-gradient(180deg,#fffdf4,#fff4ca); }
+.outfit-card.for-sale:hover { border-color:#bf7b2b; }
+.outfit-card .price-tag { display:block; margin-top:7px; color:#79500d; font-size:14px; font-weight:900; }
+.closet-preview { position:relative; }
+.closet-preview .closet-prover { max-width:360px; border-color:transparent; border-radius:52% 52% 22px 22px / 25% 25% 8px 8px; background:#f9dce6; }
+.closet-preview .closet-reset { position:absolute; right:12px; bottom:12px; z-index:2; display:grid; width:60px; height:60px; min-height:0; margin:0; padding:5px; place-items:center; border:2px solid var(--f-line); border-radius:17px; background:#fffafa; box-shadow:0 3px 0 rgba(130,49,77,.14); }
+.closet-preview .closet-reset .wardrobe-icon { width:43px; height:43px; }
+.closet-preview .closet-reset > span { position:absolute; right:-5px; bottom:-5px; display:grid; width:25px; height:25px; place-items:center; border:3px solid #fff9fa; border-radius:50%; background:#fff; color:var(--f-pink-deep); box-shadow:0 1px 0 rgba(99,35,63,.2); font:900 19px/1 Arial,sans-serif; }
+.closet-count { padding:6px 14px; border-radius:999px; background:#f8dce4; }
+.closet-items .unlock-note { margin:14px 0 4px; background:#fff2c9; color:var(--f-ink); }
+.closet-status { min-height:20px; margin:8px 0 0; color:var(--f-pink-deep); font-weight:900; text-align:center; }
+
+/* Settings and report use identical labelled rows. */
+.modal[data-view="settings"] .dialog, .modal[data-view="report"] .dialog { width:min(1024px,96vw); }
+.settings-group { display:grid; grid-template-columns: minmax(150px, .75fr) minmax(0,1.5fr); align-items:center; gap:12px; margin:12px 0; padding:16px 20px; border:2px solid #eed1d9; border-radius:22px; background:#fff9fa; }
+.settings-group > b, .settings-group > label:first-child, .settings-group > summary { color:var(--f-ink); font-size:22px; font-weight:900; }
+.settings-group .small { grid-column:1; margin:0; }
+.table-options { grid-column:2; margin:0; }
+.table-option { min-width:43px; justify-content:center; padding:9px; border:2px solid transparent; border-radius:13px; background:#fff0c1; font-weight:900; }
+.table-option:has(input:checked) { border-color:var(--f-pink-deep); background:#ed739a; color:white; }
+.settings-group input[type=checkbox] { accent-color:var(--f-pink); }
+.settings-group > label > input[type=checkbox], .table-option input[type=checkbox] { position:absolute; inline-size:1px; block-size:1px; opacity:0; pointer-events:none; }
+.settings-row-icon { width:34px; height:34px; margin-right:9px; vertical-align:middle; object-fit:contain; }
+.settings-group select { margin:0; border:2px solid var(--f-line); border-radius:14px; background:#fffefa; color:var(--f-ink); font-weight:900; }
+.modal[data-view="settings"] .settings-group { width:100%; min-height:118px; margin:12px 0; }
+.modal[data-view="settings"] .settings-group .small { display:none; }
+.modal[data-view="settings"] .settings-group .table-options { grid-column:2; }
+.modal[data-view="settings"] .settings-group select { grid-column:2; }
+.modal[data-view="settings"] .settings-group select { justify-self:start; inline-size:fit-content; min-inline-size:155px; }
+.modal[data-view="settings"] .settings-language #settingsLanguage { grid-column:2; justify-self:start; }
+.modal[data-view="settings"] .language-button { display:inline-flex; min-height:58px; padding:8px 15px; gap:10px; border:2px solid var(--f-line); border-radius:21px; background:#fffafa; color:var(--f-ink); box-shadow:none; font-size:17px; font-weight:900; }
+.modal[data-view="settings"] .language-button span { padding:8px 10px; border-radius:14px; }
+.modal[data-view="settings"] .language-button .current-language { background:var(--f-pink-deep); color:#fff; }
+.modal[data-view="settings"] #groupFraction { position:relative; grid-column:2; grid-row:1; justify-self:start; inline-size:64px; block-size:34px; margin:0; appearance:none; opacity:1; pointer-events:auto; border:2px solid #9caf5a; border-radius:999px; background:radial-gradient(circle at 15px 50%, #fff 0 10px, transparent 11px), #dfe8bd; cursor:pointer; transition:.18s ease; }
+.modal[data-view="settings"] #groupFraction:checked { border-color:#c33b68; background:radial-gradient(circle at calc(100% - 15px) 50%, #fff 0 10px, transparent 11px), #ef6a92; }
+.modal[data-view="settings"] .dialog-top h2 { display:flex; align-items:center; justify-content:center; gap:15px; }
+.modal[data-view="settings"] .dialog-top h2::before { flex:0 0 48px; margin-right:0; vertical-align:baseline; }
+.modal[data-view="report"] .dialog-top h2 { display:flex; align-items:center; justify-content:center; gap:15px; }
+.modal[data-view="report"] .dialog-top h2::before { flex:0 0 48px; margin-right:0; vertical-align:baseline; }
+.modal[data-view="settings"] .settings-title-button { line-height:1; }
+#openReport { grid-template-columns:1fr auto; text-align:left; }
+#openReport > b { display:flex; align-items:center; gap:9px; }
+#openReport > b .settings-row-icon { margin-right:0; }
+#openReport > span { display:grid; width:42px; height:42px; place-items:center; color:var(--f-pink-deep); font-family:Arial, sans-serif; font-size:39px; font-weight:700; line-height:1; }
+#dailyReport { cursor:pointer; }
+#dailyReport summary { list-style:none; }
+#dailyReport summary::after { content:"›"; float:right; font-size:36px; line-height:.55; }
+.report-chart { margin:18px 0 13px; padding:17px 20px 19px; border:2px solid var(--f-line); border-radius:22px; background:#fff9fa; }
+.report-chart-head { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin-bottom:14px; color:var(--f-ink); }
+.report-chart-head b { font-size:22px; }.report-chart-head span { color:#956579; font-size:16px; font-weight:800; }
+.report-bars { display:grid; gap:12px; }.report-bar-row { display:grid; grid-template-columns:minmax(112px,.85fr) minmax(100px,2.2fr) auto; align-items:center; gap:12px; color:var(--f-ink); font-weight:900; }
+.report-bar-track { height:18px; overflow:hidden; border:2px solid #ead0d7; border-radius:999px; background:#f7e6eb; }
+.report-bar-track i { display:block; width:var(--bar); height:100%; border-radius:999px; transition:width .2s ease; }
+.report-bar-row.has-value .report-bar-track i { min-width:10px; }.report-bar-correct .report-bar-track i { background:linear-gradient(90deg,#bdd96f,#86aa4e); }.report-bar-wrong .report-bar-track i { background:linear-gradient(90deg,#ff99af,#e95682); }.report-bar-accuracy .report-bar-track i { background:linear-gradient(90deg,#ffe78e,#f3bf4f); }
+.report-table { overflow:hidden; border:2px solid var(--f-line); border-radius:20px; background:#fffdfa; }.report-table table { color:var(--f-ink); }.report-table thead { background:#f9dce4; color:var(--f-ink); }.report-table th,.report-table td { border-color:#efd2da; }.report-table tbody tr:nth-child(even) { background:#fff8fa; }
+
+/* Reward has its own ribbon, but reuses the same card and button language. */
+.modal[data-view="reward"] .dialog { width:min(820px,96vw); padding-bottom:25px; }
+.modal[data-view="reward"] .dialog-top { min-height:116px; margin-bottom:4px; background:transparent; border:0; }
+.modal[data-view="reward"] .dialog-top h2 { padding:13px 51px; background:linear-gradient(180deg,#f77d9f,#e95986); font-size:36px; }
+.modal[data-view="reward"] .dialog-top h2::before { display:none; }
+.modal[data-view="reward"] .dialog-top h2::after { content:""; position:absolute; left:50%; top:-45px; width:73px; height:64px; transform:translateX(-50%); background:url("assets/figma-icons/reward_star.png") center / contain no-repeat; }
+.modal[data-view="reward"] .intro-message { margin:0 0 10px; font-size:21px; font-weight:900; color:var(--f-ink); }
+.modal[data-view="reward"] .intro-message::after { content:"Escolha uma peça"; display:block; margin-top:7px; font-size:20px; }
+.modal[data-view="reward"] .reward-grid { gap:17px; }
+.modal[data-view="reward"] .outfit-card { padding:13px 9px; border:2px solid #e4aab9; border-radius:22px; }
+.modal[data-view="reward"] .outfit-card::before { content:"♡"; display:block; height:23px; color:#e45e88; font-size:28px; line-height:18px; }
+.modal[data-view="reward"] .outfit-card span, .modal[data-view="reward"] .outfit-card small { display:none; }
+.modal[data-view="reward"] .outfit-card .reward-price,
+.modal[data-view="reward"] .outfit-card .reward-free { display:inline-flex; align-items:center; justify-content:center; min-height:28px; margin-top:5px; padding:4px 9px; border-radius:999px; font-size:13px; font-weight:900; }
+.modal[data-view="reward"] .outfit-card .reward-price { background:#fff0b7; color:#77500f; }
+.modal[data-view="reward"] .outfit-card .reward-free { background:#e5f0c8; color:#49672f; }
+.reward-status { min-height:24px; margin:4px 0 0; color:var(--f-pink-deep); font-weight:900; text-align:center; }
+
+/* A collection release uses the same dialog language, without changing any wardrobe artwork. */
+.modal[data-view="collection-launch"] .dialog { width:min(650px,94vw); }
+.modal[data-view="collection-launch"] .dialog-top h2 { display:flex; align-items:center; justify-content:center; gap:14px; }
+.modal[data-view="collection-launch"] .dialog-top h2::before { content:""; flex:0 0 48px; margin:0; background:url("assets/figma-icons/reward_star.png") center / contain no-repeat; }
+.collection-launch { padding:12px 10px 4px; text-align:center; }
+.collection-launch p { margin:0; color:var(--f-ink); font-size:24px; font-weight:900; }
+.collection-launch .collection-price { margin-top:13px; color:#76551b; font-size:17px; }
+#viewNewCollection::before { content:""; width:26px; height:26px; background:url("assets/figma-icons/reward_star.png") center / contain no-repeat; }
+
+/* Every primary action has a matching Figma icon. */
+.dialog .primary { display:inline-flex; align-items:center; justify-content:center; gap:10px; }
+#saveSettings::before, #chooseAgain::before { content:""; width:28px; height:28px; background:url("assets/figma-check-circle.png") center / contain no-repeat; }
+#helpNext::before { content:""; width:28px; height:28px; background:url("assets/figma-icons/arrow_circle_white.png") center / contain no-repeat; }
+#helpEmptyBack::before { content:""; width:28px; height:28px; background:url("assets/figma-undo.png") center / contain no-repeat; }
+#reportBack::before { content:""; width:28px; height:28px; background:url("assets/figma-check.png") center / contain no-repeat; }
+
+/* Counted multiplication groups use simple dots, matching the rest of the app. */
+.help-count-dots { display:flex; flex-wrap:wrap; justify-content:center; gap:5px; max-width:112px; }.help-count-dot { display:block; width:15px; height:15px; border:1.5px solid #db3769; border-radius:50%; background:linear-gradient(180deg,#ff9ab2,#f15e8c); box-shadow:0 1px 0 rgba(139,41,79,.18); }
+
+/* The keyboard compresses before it can overlap a column sum. */
+@media (min-width:901px) {
+  .exercise-layout { grid-template-columns:minmax(260px,1.28fr) minmax(195px,.84fr); gap:clamp(14px,2vw,25px); }
+  .keypad { min-width:0; }
+  .keypad button { min-height:clamp(53px,5.6vw,84px); font-size:clamp(30px,3.2vw,43px); }
+}
+
+@media (max-width: 900px) {
+  .site-header { min-height:100px; padding:8px 18px; }
+  .header-top { min-height:84px; }
+  .site-header .brand img { width:300px; height:84px; }
+  .score { min-height:48px; padding:5px 11px 5px 7px; border-radius:17px; }
+  .score img { width:30px; height:30px; }.score-copy b {font-size:23px} #settings{width:48px;height:48px}
+  #modes { width:100%; }
+  main .layout { grid-template-columns:minmax(0,1fr) minmax(250px,.75fr); }
+  .exercise-layout { grid-template-columns:minmax(0,1fr) 205px; }
+  .play { padding:20px 15px; }.exercise-main{min-height:310px}.keypad button{min-height:54px}
+  .layout .doll-scene { min-height:480px; }.wardrobe .layered-doll{height:480px}
+}
+
+@media (max-width: 650px) {
+  .modal[data-view="closet"] .closet-tabs { display:flex; flex-wrap:nowrap; overflow-x:auto; scrollbar-width:thin; }
+  .modal[data-view="closet"] .closet-tabs button { flex:0 0 42px; width:42px; height:42px; }
+  .modal[data-view="settings"] #groupFraction { grid-column:1; grid-row:auto; justify-self:start; }
+}
+@media (max-width: 720px) {
+  main .layout { grid-template-columns: 1fr; }
+  .layout .wardrobe { width: 100%; }
+  .exercise-layout { grid-template-columns: minmax(0, 1fr) minmax(170px, 38%); }
+  .play { padding: 18px 12px; }
+  .exercise-main { min-height: 270px; }
+  .exercise-main .equation { min-height: 210px; }
+}
+@media (max-width: 650px) {
+  .header-top { grid-template-columns:1fr auto 1fr; }.site-header .brand img{width:180px;height:62px}.score-copy b{font-size:19px}.score img{width:25px;height:25px}#settings{width:43px;height:43px}
+  main { padding:16px 12px 32px; } #modes .mode{min-height:61px;padding:6px}.mode-icon{width:34px;height:34px}#modes .mode b{font-size:15px}
+  main .layout{grid-template-columns:1fr}.exercise-layout{grid-template-columns:minmax(0,1fr) minmax(135px,36%);gap:8px}.exercise-main{padding:12px 7px;min-height:0}.exercise-main .equation{min-height:148px;font-size:clamp(29px,8vw,47px)}.keypad{gap:5px}.keypad button{min-height:45px;border-radius:12px}.exercise-actions .primary{min-height:58px;font-size:22px}.exercise-actions .primary::before{width:28px;height:28px;margin-right:8px;font-size:18px}.help-control{min-height:62px;margin-top:8px}.exercise-actions .help{width:50px;height:50px;min-height:50px}.help-dot{width:17px;height:17px}.help-meter-label{font-size:18px}
+  .layout .wardrobe{width:100%}.layout .doll-scene{min-height:420px}.wardrobe .layered-doll{height:420px}.wardrobe-heading span{font-size:25px}#closet{font-size:20px}
+  .dialog{padding:0 15px 16px}.dialog-top{margin:0 -15px 14px;padding:14px 65px 12px;min-height:65px}.dialog-top h2{font-size:25px}.dialog-top h2::before{width:35px;height:35px;margin-right:7px}.close{top:10px;right:12px;width:39px;height:39px}.settings-group{grid-template-columns:1fr;padding:13px}.table-options{grid-column:1}.settings-group .small{grid-column:1}.modal[data-view="closet"] .dialog{height:calc(100dvh - 12px)}.closet-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.closet-tabs button{width:42px;height:42px}.closet-preview .closet-prover{min-height:280px}
+}
+
+/* Fidelity pass: measurements mirror the 1448 × 1086 Figma frames. */
+@media (min-width: 901px) {
+  .site-header { min-height: 160px; padding: 0 42px; }
+  .header-top { min-height: 160px; }
+  .site-header .brand img { width: 397px; height: 133px; object-fit: contain; }
+  .score { min-width: 189px; min-height: 75px; padding: 8px 20px; border-radius: 28px; }
+  .score img { width: 52px; height: 52px; }
+  .score-copy b { font-size: 35px; }
+  #settings { width: 88px; height: 78px; border-radius: 23px; }
+  #settings img { width: 46px; height: 46px; }
+  main { max-width: 1448px; padding: 18px 28px 30px; }
+  #modes { width: calc(66.45% - 41px); margin: 0 0 0 36px; gap: 0; }
+  #modes .mode, #modes .mode + .mode { min-height: 74px; border-radius: 22px 22px 0 0; }
+  #modes .mode + .mode { margin-left: -1px; }
+  main .layout { grid-template-columns: minmax(0, 2.105fr) minmax(0, 1fr); gap: 34px; margin-top: 0; }
+  .game { min-height: 786px; }
+  .play { padding: 137px 67px 22px; }
+  .exercise-layout { grid-template-columns: minmax(0, 444px) minmax(306px, 1fr); align-items: start; gap: 25px; }
+  .challenge-column { display: grid; grid-template-rows: 270px 81px; gap: 15px; }
+  .exercise-main { min-height: 270px; height: 270px; padding: 12px 18px; border-radius: 25px; }
+  .exercise-main .equation { min-height: 244px; font-size: 62px; }
+  .exercise-main .equation input { width: 128px; min-height: 96px; }
+  .keypad { padding: 0; gap: 10px; }
+  .keypad button { min-height: 84px; border-radius: 17px; font-size: 43px; }
+  .keypad button[data-key="erase"] img { width: 55px; height: 55px; object-fit: contain; }
+  .exercise-actions { display: block; width: 100%; }
+  .exercise-actions .primary { width: 100%; height: 81px; min-height: 81px; font-size: 31px; }
+  .help-control { min-height: 96px; margin-top: 128px; padding-top: 25px; }
+  .exercise-actions .help, .help { width: 86px; height: 86px; min-height: 86px; }
+  .exercise-actions .help img, .help img { width: 62px; height: 62px; object-fit: contain; }
+  .help-dot { width: 31px; height: 31px; }
+  .help-meter { gap: 13px; }.help-dots { gap: 12px; }.help-meter-label { font-size: 31px; }
+  .layout .wardrobe { min-height: 865px; margin-top: -72px; padding: 18px 12px 16px; }
+  .wardrobe-heading { padding-top: 4px; }.wardrobe-heading span { width:min(78%, 620px); min-width:0; padding:0 11%; font-size:34px; }
+  .layout .doll-scene { min-height: 646px; margin-top: 3px; }
+  .wardrobe .layered-doll { height: 614px; max-height: 614px; }
+  #closet { min-height: 81px; margin-top: 18px; font-size: 29px; }
+}
+
+/* Figma-exported raster icons are never redrawn with CSS. */
+#settings img, .score img, #closet img, .mode-icon img, .wardrobe-icon, .keypad button[data-key="erase"] img { object-fit: contain; }
+.mode-icon { padding: 0; background: transparent !important; }
+.mode-icon img { width: 50px; height: 50px; }
+.exercise-actions .primary::before { content:""; display:block; flex:0 0 44px; width:44px; height:44px; margin:0; border:0; border-radius:0; background:url("assets/figma-check-circle.png") center / contain no-repeat; }
+.wardrobe-icon { width: 100%; max-width: 40px; height: 40px; }
+.modal[data-view="closet"] .wardrobe-icon { max-width: 42px; height: 42px; }
+.keypad button[data-key="erase"] { display: grid; place-items: center; }
+.keypad button[data-key="erase"] img { width: 43px; height: 43px; }
+
+/* Keep the lower help rail outside the problem card, just like the Figma layout. */
+.challenge-column { min-width: 0; }
+.exercise-actions { flex-direction: row; align-items: stretch; }
+.help-control { display: flex; align-items: center; justify-content: center; width: 100%; }
+.help-control .help { display:grid; place-items:center; padding:0; border:0; border-radius:50%; background:transparent; box-shadow:none; }
+.help-control .help img { width:100%; height:100%; object-fit:contain; }
+.help-control .help { display:grid; place-items:center; padding:0; border-radius:50%; }
+
+/* Decorative sparkles are intentionally omitted from the streamlined interface. */
+#modes::before, #modes::after,
+.exercise-main::before, .exercise-main::after,
+.wardrobe-heading::before, .wardrobe-heading::after { display:none !important; }
+
+@media (max-width: 900px) {
+  .challenge-column { display: flex; flex-direction: column; min-width: 0; }
+  .exercise-actions { width: 100%; margin-top: 10px; }
+  .exercise-actions .primary { width: 100%; }
+  .help-control { margin-top: 13px; }
+  .site-header .brand img { width: 240px; }
+}
+
+/* iPad landscape: keep the complete game comfortably inside a 1024 × 768 view.
+   This only changes UI spacing and sizing; doll and wardrobe artwork are untouched. */
+@media (min-width: 901px) and (max-width: 1100px) and (max-height: 820px) {
+  html, body { width:100%; height:100%; overflow:hidden; }
+
+  .site-header { height:100px; min-height:100px; padding:0 28px; }
+  .header-top { min-height:100px; height:100px; }
+  .site-header .brand img { width:250px; height:88px; }
+  .score { min-width:132px; min-height:54px; padding:5px 13px 5px 8px; border-radius:20px; }
+  .score img { width:37px; height:37px; }
+  .score-copy b { font-size:27px; }
+  #settings { width:58px; height:58px; border-radius:18px; }
+  #settings img { width:34px; height:34px; }
+
+  main { box-sizing:border-box; height:calc(100dvh - 100px); max-width:none; padding:8px 22px 0; overflow:hidden; }
+  #modes { width:calc(66.45% - 83px); height:90px; margin:0 0 0 40px; align-items:flex-end; }
+  #modes .mode, #modes .mode + .mode { height:70px; min-height:70px; padding:5px 12px; align-self:flex-end; border-radius:17px 17px 0 0; }
+  #modes .mode.active { height:90px; min-height:90px; }
+  .mode-icon img { width:36px; height:36px; }
+  #modes .mode b { font-size:21px; }
+
+  main .layout { height:calc(100% - 90px); grid-template-columns:minmax(0,2.105fr) minmax(0,1fr); gap:24px; align-items:stretch; }
+  .game { min-height:0; height:100%; }
+  .play { display:flex; flex-direction:column; box-sizing:border-box; height:100%; padding:24px 30px 8px; }
+  .play form { width:100%; margin-block:auto; }
+  .exercise-layout { grid-template-columns:minmax(260px,1.26fr) minmax(184px,.8fr); align-items:start; gap:14px; }
+  .challenge-column { display:grid; grid-template-rows:218px 58px; gap:10px; min-width:0; }
+  .exercise-main { box-sizing:border-box; min-height:218px; height:218px; padding:8px 12px; border-radius:23px; }
+  .exercise-main .equation { min-height:198px; gap:8px; font-size:50px; }
+  .exercise-main .equation input { width:86px; min-height:76px; border-radius:14px; }
+  .sumboard { transform:scale(.84); transform-origin:center; }
+  .fraction-exercise { min-height:0; height:100%; padding:2px 4px; }
+  .fraction-exercise .pizza { width:min(172px,61%); margin:2px auto; }
+  .fraction-input { width:72px; grid-template-rows:52px 3px 52px; }
+  .fraction-input input { width:72px; font-size:29px; }
+
+  .keypad { gap:6px; padding:0; min-width:0; }
+  .keypad button { min-height:51px; border-radius:13px; font-size:32px; }
+  .keypad button[data-key="erase"] img { width:34px; height:34px; }
+  .exercise-actions { display:block; width:100%; }
+  .exercise-actions .primary { width:100%; height:58px; min-height:58px; border-radius:17px; font-size:23px; }
+  .exercise-actions .primary::before { flex-basis:31px; width:31px; height:31px; }
+  .help-control { min-height:55px; margin-top:8px; padding-top:8px; gap:8px; }
+  .exercise-actions .help, .help { width:54px; height:54px; min-height:54px; }
+  .exercise-actions .help img, .help img { width:46px; height:46px; }
+  .help-dot { width:19px; height:19px; }
+  .help-meter, .help-dots { gap:7px; }
+  .help-meter-label { font-size:20px; }
+  #feedback { min-height:0; margin:0; font-size:14px; }
+
+  .layout .wardrobe { box-sizing:border-box; min-height:0; height:calc(100% + 90px); margin-top:-90px; padding:7px 8px 8px; }
+  .wardrobe-heading { padding:0 4px 4px; }
+  .wardrobe-heading span { width:78%; min-width:0; padding:0 11%; font-size:24px; }
+  .wardrobe-heading::before, .wardrobe-heading::after { top:13px; width:30px; height:36px; }
+  .layout .doll-scene { box-sizing:border-box; min-height:0; height:calc(100% - 67px); margin-top:0; padding:0 3px; }
+  .wardrobe .layered-doll { height:100%; max-height:none; }
+  #closet { min-height:53px; margin-top:6px; border-radius:16px; font-size:18px; }
+  #closet img { width:26px; height:26px; }
+}
+
+/* Tabs and fractions follow the proportions of the approved game frame.
+   The doll and wardrobe artwork are intentionally not affected here. */
+#modes { align-items:flex-end; }
+#modes .mode,
+#modes .mode + .mode {
+  border-bottom:0;
+  box-shadow:none !important;
+}
+
+@media (min-width: 901px) {
+  #modes .mode,
+  #modes .mode + .mode {
+    height:70px;
+    min-height:70px;
+  }
+  #modes .mode.active {
+    height:90px;
+    min-height:90px;
+    box-shadow:none !important;
+  }
+
+  .fraction-exercise {
+    grid-template-columns:minmax(0,205px) 91px;
+    gap:18px;
+  }
+  .fraction-exercise .pizza {
+    width:205px;
+    max-width:100%;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1100px) and (max-height: 820px) {
+  .fraction-exercise {
+    grid-template-columns:minmax(0,172px) 72px;
+    gap:8px;
+  }
+  .fraction-exercise .pizza { width:172px; }
+}
+
+/* Meu look uses the supplied Dress Up Math ribbon construction. */
+.wardrobe-heading .dress-up-ribbon {
+  --ribbon-light:#f7659a;
+  --ribbon-dark:#d7346f;
+  --ribbon-outline:#8f2e58;
+  position:relative;
+  display:grid;
+  width:min(80%,520px);
+  aspect-ratio:272 / 72;
+  margin-inline:auto;
+  padding:0;
+  place-items:center;
+  overflow:hidden;
+  background:transparent;
+  box-shadow:none;
+}
+.dress-up-ribbon__tail {
+  position:absolute;
+  z-index:0;
+  top:26%;
+  left:0;
+  width:10.29412%;
+  height:68.44444%;
+  background:var(--ribbon-outline);
+  clip-path:polygon(.03254% 5.84416%,37.83% 49.67532%,.03254% 100%,99.96643% 99.35065%,99.96643% 0);
+}
+.dress-up-ribbon__tail::before {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(var(--ribbon-light),var(--ribbon-dark));
+  clip-path:polygon(16.415% 11.00593%,49.61046% 49.50045%,16.33375% 93.80603%,89.25214% 93.3322%,89.25214% 6.74639%);
+}
+.dress-up-ribbon__tail--right { left:auto; right:-.03294%; transform:scaleX(-1); }
+.dress-up-ribbon__face {
+  position:absolute;
+  z-index:1;
+  inset:18.12472% 6.49713% 18.125% 6.53018%;
+  background:
+    linear-gradient(var(--ribbon-outline),var(--ribbon-outline)) top / 100% 6.53592% no-repeat,
+    linear-gradient(var(--ribbon-outline),var(--ribbon-outline)) bottom / 100% 6.53592% no-repeat,
+    linear-gradient(var(--ribbon-outline),var(--ribbon-outline)) left / 1.26815% 100% no-repeat,
+    linear-gradient(var(--ribbon-outline),var(--ribbon-outline)) right / 1.26815% 100% no-repeat,
+    linear-gradient(var(--ribbon-light),var(--ribbon-dark));
+}
+.wardrobe-heading .dress-up-ribbon b {
+  position:relative;
+  z-index:2;
+  color:#fff;
+  font:inherit;
+}
+
+/* The help artwork stays at the requested fixed optical size. */
+.help-control .help img { width:40px; height:40px; }
+
+@media (min-width:901px) {
+  .wardrobe-heading .dress-up-ribbon { width:min(78%,620px); }
+}
+
+@media (max-width:650px) {
+  .wardrobe-heading .dress-up-ribbon { width:min(80%,520px); }
+}
+
+/* The game is designed as one 1024 × 768 landscape canvas.  It scales as a
+   single unit instead of reflowing the problem, keypad and fitting room. */
+#appViewport { display:none; position:relative; overflow:hidden; }
+#appCanvas { width:1024px; height:768px; transform-origin:top left; }
+#orientationPrompt { display:none; }
+
+@media (orientation:landscape) {
+  html, body { width:100%; height:100%; overflow:hidden; }
+  body { display:grid; place-items:center; }
+  #appViewport { display:block; width:1024px; height:768px; }
+
+  #appCanvas .site-header { height:100px; min-height:100px; padding:0 28px; }
+  #appCanvas .header-top { min-height:100px; height:100px; }
+  #appCanvas .site-header .brand img { width:250px; height:88px; }
+  #appCanvas .score { min-width:132px; min-height:54px; padding:5px 13px 5px 8px; border-radius:20px; }
+  #appCanvas .score img { width:37px; height:37px; }
+  #appCanvas .score-copy b { font-size:27px; }
+  #appCanvas #settings { width:58px; height:58px; border-radius:18px; }
+  #appCanvas #settings img { width:34px; height:34px; }
+
+  #appCanvas main { box-sizing:border-box; height:668px; max-width:none; padding:16px 24px; overflow:hidden; }
+  #appCanvas #modes { width:calc(66.45% - 83px); height:67px; margin:0 0 0 40px; align-items:flex-end; }
+  #appCanvas #modes .mode,
+  #appCanvas #modes .mode + .mode { height:50px; min-height:50px; padding:5px 12px; align-self:flex-end; border-radius:17px 17px 0 0; }
+  #appCanvas #modes .mode.active { height:67px; min-height:67px; }
+  #appCanvas .mode-icon img { width:36px; height:36px; }
+  #appCanvas #modes .mode b { font-size:21px; }
+
+  #appCanvas main .layout { height:calc(100% - 67px); grid-template-columns:minmax(0,2.105fr) minmax(0,1fr); gap:24px; align-items:stretch; }
+  #appCanvas .game { min-height:0; height:100%; }
+  #appCanvas .play { display:flex; flex-direction:column; box-sizing:border-box; height:100%; padding:24px 30px 8px; }
+  #appCanvas .play form { width:100%; margin-block:auto; }
+  #appCanvas .exercise-layout { grid-template-columns:minmax(260px,1.26fr) minmax(184px,.8fr); align-items:start; gap:14px; }
+  #appCanvas .challenge-column { display:grid; grid-template-rows:218px 58px; gap:10px; min-width:0; }
+  #appCanvas .exercise-main { box-sizing:border-box; min-height:218px; height:218px; padding:8px 12px; border-radius:23px; }
+  #appCanvas .exercise-main .equation { min-height:198px; gap:8px; font-size:50px; }
+  #appCanvas .exercise-main .equation input { width:86px; min-height:76px; border-radius:14px; }
+  #appCanvas .sumboard { transform:scale(.84); transform-origin:center; }
+  #appCanvas .fraction-exercise { min-height:0; height:100%; padding:2px 4px; grid-template-columns:minmax(0,172px) 72px; gap:8px; }
+  #appCanvas .fraction-exercise .pizza { width:172px; margin:2px auto; }
+  #appCanvas .fraction-input { width:72px; grid-template-rows:52px 3px 52px; }
+  #appCanvas .fraction-input input { width:72px; font-size:29px; }
+
+  #appCanvas .keypad { gap:6px; padding:0; min-width:0; }
+  #appCanvas .keypad button { min-height:51px; border-radius:13px; font-size:32px; }
+  #appCanvas .keypad button[data-key="erase"] img { width:34px; height:34px; }
+  #appCanvas .exercise-actions { display:block; width:100%; }
+  #appCanvas .exercise-actions .primary { width:100%; height:58px; min-height:58px; border-radius:17px; font-size:23px; }
+  #appCanvas .exercise-actions .primary::before { flex-basis:31px; width:31px; height:31px; }
+  #appCanvas .help-control { min-height:55px; margin-top:24px; padding-top:8px; gap:8px; }
+  #appCanvas .exercise-actions .help, #appCanvas .help { width:54px; height:54px; min-height:54px; }
+  #appCanvas .help-dot { width:19px; height:19px; }
+  #appCanvas .help-meter, #appCanvas .help-dots { gap:7px; }
+  #appCanvas .help-meter-label { font-size:20px; }
+  #appCanvas #feedback { min-height:0; margin:0; font-size:14px; }
+
+  #appCanvas .layout .wardrobe { box-sizing:border-box; min-height:0; height:634px; margin-top:-65px; padding:7px 8px 8px; }
+  #appCanvas .wardrobe-heading { padding:0 4px 4px; }
+  #appCanvas .wardrobe-heading .dress-up-ribbon { width:78%; font-size:24px; }
+  #appCanvas .layout .doll-scene { box-sizing:border-box; min-height:0; height:calc(100% - 67px); margin-top:0; padding:0 3px; }
+  #appCanvas .wardrobe .layered-doll { height:100%; max-height:none; }
+  #appCanvas #closet { min-height:53px; margin-top:6px; border-radius:16px; font-size:18px; }
+  #appCanvas #closet img { width:26px; height:26px; }
+}
+
+@media (orientation:portrait) {
+  html, body { width:100%; min-height:100%; overflow:hidden; }
+  #appViewport, #modal { display:none !important; }
+  #orientationPrompt {
+    position:fixed;
+    inset:0;
+    display:grid;
+    align-content:center;
+    justify-items:center;
+    gap:26px;
+    padding:32px;
+    color:var(--f-ink);
+    background:linear-gradient(180deg,#f9dce6,#fffaf4 72%);
+    text-align:center;
+  }
+  #orientationPrompt p { margin:0; color:inherit; font-size:clamp(25px,7vw,38px); font-weight:900; line-height:1.1; }
+  .orientation-rotate-icon {
+    display:block;
+    width:min(44vw,210px);
+    height:auto;
+    animation:rotate-device 2.4s ease-in-out infinite;
+  }
+}
+
+@keyframes rotate-device {
+  0%, 15% { transform:rotate(0deg); }
+  55%, 75% { transform:rotate(90deg); }
+  100% { transform:rotate(0deg); }
+}
