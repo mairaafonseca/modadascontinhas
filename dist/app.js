@@ -928,6 +928,18 @@ window.addEventListener('storage', event => {
   if (dialogKind === 'reward') renderOfferCards();
 });
 $('closet').onclick=()=>{openDialog('closet','Guarda-roupa','');renderClosetBody()};
+$('gameHelp').onclick = event => {
+  openDialog('game-help', 'Como funciona?', `<ul class="game-help-list">
+    <li>Acerte uma conta para ganhar uma estrelinha.</li>
+    <li>Use suas estrelinhas para comprar as peças que você descobrir.</li>
+    <li>Toque em Continuar jogando para guardar suas estrelinhas.</li>
+    <li>No guarda-roupa, toque em uma peça sua para vestir ou tirar.</li>
+    <li>Precisa de ajuda com a conta? Toque na lâmpada.</li>
+  </ul>`);
+  lastFocus = event.currentTarget;
+  $('dialogActions').innerHTML = '<button type="button" class="primary" id="closeGameHelp">Entendi</button>';
+  $('closeGameHelp').onclick = closeDialog;
+};
 function showReport(){
   openDialog('report','Relatório diário','<div id="dailyReportContent"></div>');
   learning.renderReport();
