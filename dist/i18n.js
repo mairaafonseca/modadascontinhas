@@ -182,6 +182,8 @@ Object.assign(entries, {
   'Continuar jogando':'Verder spelen',
   'Acerte continhas para descobrir novas peças.':'Los sommen goed op om nieuwe kledingstukken te ontdekken.',
   'Comprar':'Kopen',
+  'Economizar':'Sparen',
+  'Nova!':'Nieuw!',
   'Já é sua':'Al van jou',
   'Esta peça já é sua.':'Dit kledingstuk is al van jou.',
   'Descubra esta peça jogando.':'Ontdek dit kledingstuk tijdens het spelen.',

@@ -198,20 +198,29 @@ main .layout { grid-template-columns: minmax(0, 2.05fr) minmax(310px, .93fr); ga
 .report-bar-row.has-value .report-bar-track i { min-width:10px; }.report-bar-correct .report-bar-track i { background:linear-gradient(90deg,#bdd96f,#86aa4e); }.report-bar-wrong .report-bar-track i { background:linear-gradient(90deg,#ff99af,#e95682); }.report-bar-accuracy .report-bar-track i { background:linear-gradient(90deg,#ffe78e,#f3bf4f); }
 .report-table { overflow:hidden; border:2px solid var(--f-line); border-radius:20px; background:#fffdfa; }.report-table table { color:var(--f-ink); }.report-table thead { background:#f9dce4; color:var(--f-ink); }.report-table th,.report-table td { border-color:#efd2da; }.report-table tbody tr:nth-child(even) { background:#fff8fa; }
 
-/* Reward has its own ribbon, but reuses the same card and button language. */
-.modal[data-view="reward"] .dialog { width:min(820px,96vw); padding-bottom:25px; }
-.modal[data-view="reward"] .dialog-top { min-height:116px; margin-bottom:4px; background:transparent; border:0; }
-.modal[data-view="reward"] .dialog-top h2 { padding:13px 51px; background:linear-gradient(180deg,#f77d9f,#e95986); font-size:36px; }
+.reward-balance { display:none; }
+.modal[data-view="reward"] .dialog { --reward-padding:clamp(10px,3vw,42px); width:min(820px,96vw); padding:0 var(--reward-padding) 28px; border-radius:clamp(14px,2vw,30px); }
+.modal[data-view="reward"] .dialog-top { display:grid; grid-template-columns:1fr minmax(0,auto) 1fr; min-height:52px; margin:0 calc(-1 * var(--reward-padding)) 0; padding:7px clamp(10px,2vw,26px); border-bottom:1px solid var(--f-line); background:linear-gradient(180deg,#fff4f1,#f9dce4); }
+.modal[data-view="reward"] .dialog-top h2 { padding:0; border:0; background:none; box-shadow:none; font-size:clamp(16px,2.5vw,31px); text-align:center; }
 .modal[data-view="reward"] .dialog-top h2::before { display:none; }
-.modal[data-view="reward"] .dialog-top h2::after { content:""; position:absolute; left:50%; top:-45px; width:73px; height:64px; transform:translateX(-50%); background:url("assets/figma-icons/reward_star.png") center / contain no-repeat; }
-.modal[data-view="reward"] .intro-message { margin:0 0 10px; font-size:21px; font-weight:900; color:var(--f-ink); }
-.modal[data-view="reward"] .reward-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(6px,2vw,17px); }
-.modal[data-view="reward"] .outfit-card { padding:clamp(4px,1vw,13px); border:2px solid #e4aab9; border-radius:22px; text-align:center; }
-.modal[data-view="reward"] .outfit-card .reward-price { display:inline-block; margin:0; padding:4px 8px; border-radius:999px; font-size:13px; font-weight:900; background:#fff0b7; color:#77500f; }
-.modal[data-view="reward"] .reward-buy { display:block; width:100%; margin-top:7px; padding:6px 4px; font-size:clamp(12px,2vw,16px); border-radius:14px; }
-.modal[data-view="reward"] .reward-buy:disabled:hover { transform:none; }
+.modal[data-view="reward"] .dialog-top .close { position:static; justify-self:end; width:36px; height:36px; font-size:25px; }
+.modal[data-view="reward"] .reward-balance { display:inline-flex; gap:5px; align-items:center; font-size:clamp(15px,2vw,27px); font-weight:900; color:var(--f-ink); }
+.reward-balance img { width:clamp(19px,3vw,36px); }
+.modal[data-view="reward"] .reward-grid { display:flex; justify-content:center; gap:clamp(5px,1vw,12px); margin:clamp(10px,3vh,28px) 0; }
+.modal[data-view="reward"] .outfit-card { flex:0 1 33.33%; min-width:0; display:flex; flex-direction:column; padding:clamp(4px,1vw,12px); border:1px solid var(--f-line); border-radius:clamp(10px,1.4vw,19px); background:linear-gradient(180deg,#fffdfa,#fff5d5); text-align:center; }
+.reward-card-top { display:flex; justify-content:space-between; align-items:center; gap:3px; }
+.modal[data-view="reward"] .reward-price { display:inline-flex; gap:3px; align-items:center; margin:0; color:var(--f-ink); font-size:clamp(11px,1.6vw,18px); font-weight:900; }
+.reward-price img { width:clamp(13px,1.8vw,22px); }
+.modal[data-view="reward"] .reward-new { margin:0; padding:2px 6px; border-radius:99px; background:var(--f-pink-deep); color:white; font-size:clamp(10px,1.3vw,14px); }
+.modal[data-view="reward"] .piece-preview { width:min(100%,170px,28vh); flex:none; margin-bottom:3px; }
+.reward-name { display:grid; place-items:center; flex:1; color:var(--f-ink); font-size:clamp(11px,1.6vw,17px); overflow-wrap:anywhere; }
+.modal[data-view="reward"] .reward-buy { width:100%; min-height:32px; margin-top:7px; padding:3px; font-size:clamp(11px,1.6vw,16px); border-radius:99px; }
+.modal[data-view="reward"] .reward-buy:disabled { border-color:#d9c69e; background:#fff5d9; box-shadow:none; color:#725a40; opacity:1; transform:none; }
+#continueRound { display:inline-flex; align-items:center; gap:7px; border-color:var(--f-pink-deep); border-radius:99px; padding:7px 15px; }
+#continueRound span { font-size:20px; line-height:1; }
 #earned { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; }
-.reward-status { min-height:24px; margin:4px 0 0; color:var(--f-pink-deep); font-weight:900; text-align:center; }
+.reward-status { margin:0 0 6px; color:var(--f-pink-deep); font-weight:900; text-align:center; }
+.reward-status:empty { margin:0; }
 
 /* A collection release uses the same dialog language, without changing any wardrobe artwork. */
 .modal[data-view="collection-launch"] .dialog { width:min(650px,94vw); }

@@ -348,6 +348,8 @@ function loadProgress() {
     stars: Number.isSafeInteger(stars) && stars >= 0 ? stars : 0,
     owned: Array.isArray(saved.owned) ? [...new Set(saved.owned)] : [],
     discovered: Array.isArray(saved.discovered) ? [...new Set(saved.discovered)] : [],
+    previousOffers: Array.isArray(saved.previousOffers) ? saved.previousOffers : [],
+    viewedCollectionReleases: Array.isArray(saved.viewedCollectionReleases) ? saved.viewedCollectionReleases : [],
     worn: saved.worn && typeof saved.worn === 'object' ? {...saved.worn} : {},
     seenCollectionReleases: Array.isArray(saved.seenCollectionReleases) ? [...saved.seenCollectionReleases] : []
   };
@@ -641,6 +643,7 @@ $('form').onsubmit = async event => {
     state.stars += 1;
     const items = rewardCandidates(state);
     state.discovered = [...new Set([...state.discovered, ...items])];
+    state.previousOffers = items;
     return { ok:true, items };
   });
   if (!reward.ok) {
@@ -664,6 +667,7 @@ $('form').onsubmit = async event => {
 function feedback(t){$('feedback').textContent=t}
 function openDialog(kind,title,body){lastFocus=document.activeElement;dialogKind=kind;$('modal').dataset.view=kind;$('dialogTitle').textContent=title;$('dialogBody').innerHTML=body;$('dialogActions').innerHTML='';$('modal').hidden=false;$('close').focus()}
 function closeDialog() {
+  if (dialogKind === 'reward' && rewardBuying) return;
   $('modal').hidden = true;
   if (dialogKind === 'reward') $('nextRound')?.focus();
   else lastFocus?.focus();
@@ -689,26 +693,24 @@ async function showCollectionLaunch() {
   };
   $('collectionLater').onclick = closeDialog;
 }
-function chooseDistinctPieces(candidates, count, selected = []) {
-  for (const id of candidates) {
-    if (selected.length >= count || selected.includes(id)) continue;
-    if (!selected.some(other => slotFor(other) === slotFor(id))) selected.push(id);
-  }
-  for (const id of candidates) {
-    if (selected.length >= count || selected.includes(id)) continue;
-    selected.push(id);
-  }
-  return selected;
-}
-
 function rewardCandidates(state) {
-  const unowned = catalogIds.filter(id => pieceState(id, state) !== 'owned');
-  const basics = shuffled(unowned.filter(id => priceFor(id) === 1));
-  const affordable = shuffled(unowned.filter(id => priceFor(id) <= state.stars));
-  const first = basics[0] ?? affordable[0];
-  const selected = first === undefined ? [] : [first];
-  const undiscovered = shuffled(unowned.filter(id => pieceState(id, state) === 'undiscovered'));
-  chooseDistinctPieces([...new Set([...undiscovered, ...shuffled(unowned)])], 3, selected);
+  const priority = id => 2 * Number(state.previousOffers.includes(id)) + Number(state.discovered.includes(id));
+  const unowned = shuffled(catalogIds.filter(id => pieceState(id, state) !== 'owned'))
+    .sort((a, b) => priority(a) - priority(b));
+  if (unowned.length <= 3) return unowned.sort((a, b) => priceFor(a) - priceFor(b));
+
+  const affordable = unowned.filter(id => priceFor(id) <= state.stars);
+  const overBudget = unowned.filter(id => priceFor(id) > state.stars);
+  // Reserve one higher-priced piece even if the player can afford every remaining item.
+  const prices = unowned.map(priceFor).sort((a, b) => a - b);
+  const aspirational = overBudget[0] ?? unowned.find(id => priceFor(id) > prices[1])
+    ?? unowned.find(id => priceFor(id) > prices[0]) ?? unowned[0];
+  const available = affordable.filter(id => id !== aspirational);
+  const lowerPriced = available.filter(id => priceFor(id) < priceFor(aspirational));
+  const selected = [...new Set([...lowerPriced, ...available])].slice(0, 2);
+  selected.push(aspirational);
+  const alternatives = unowned.filter(id => !selected.includes(id));
+  selected.push(...alternatives.slice(0, 3 - selected.length));
   return selected.sort((a, b) => priceFor(a) - priceFor(b));
 }
 
@@ -719,33 +721,43 @@ function continuePlaying() {
   $('exercise').querySelector('input')?.focus();
 }
 
+let rewardBuying = false;
+
 function rewardCard(id) {
   const owned = pieceState(id) === 'owned';
   const price = priceFor(id);
-  const label = owned ? 'Já é sua' : 'Comprar';
-  return `<div class="outfit-card">${pieceHTML(id)}<small class="reward-price">⭐ ${starAmount(price)}</small>
-    <button type="button" class="primary reward-buy" data-reward="${id}" aria-label="${label} · ${outfitName(id)}" ${owned || price > progress.stars ? 'disabled' : ''}>${label}</button></div>`;
+  const affordable = price <= progress.stars;
+  const label = owned ? 'Já é sua' : affordable ? 'Comprar' : 'Economizar';
+  const release = collections[catalog.get(id).collection];
+  const isNew = release && !progress.viewedCollectionReleases.includes(release.launchId);
+  return `<div class="outfit-card">
+    <div class="reward-card-top"><small class="reward-price" aria-label="${starAmount(price)}"><img src="assets/estrela-pontos.svg" alt="">${price}</small>${isNew ? '<small class="reward-new">Nova!</small>' : ''}</div>
+    ${pieceHTML(id)}<span class="reward-name">${outfitName(id)}</span>
+    <button type="button" class="primary reward-buy" data-reward="${id}" aria-label="${label} · ${outfitName(id)} · ${starAmount(price)}" ${rewardBuying || owned || !affordable ? 'disabled' : ''}>${label}</button></div>`;
 }
 
 function renderOfferCards() {
-  $('rewardBalance').textContent = '⭐ ' + starAmount(progress.stars);
+  $('rewardBalance').setAttribute('aria-label', starAmount(progress.stars));
+  $('rewardStars').textContent = progress.stars;
   $('rewardItems').innerHTML = offers.map(rewardCard).join('');
 }
 
 function showReward() {
   const title = offers.length ? 'Você acertou!' : 'Sua coleção está completa!';
-  openDialog('reward', title, '<p class="intro-message" id="rewardBalance"></p><div class="reward-grid" id="rewardItems"></div><p class="reward-status" id="rewardStatus" aria-live="polite"></p>');
+  openDialog('reward', title, '<div class="reward-grid" id="rewardItems"></div><p class="reward-status" id="rewardStatus" aria-live="polite"></p>');
   renderOfferCards();
-  $('dialogActions').innerHTML = '<button type="button" class="secondary" id="continueRound">Continuar jogando</button>';
+  $('dialogActions').innerHTML = '<button type="button" class="secondary" id="continueRound"><span aria-hidden="true">▷</span> Continuar jogando</button>';
   $('continueRound').onclick = continuePlaying;
   $('rewardItems').onclick = async event => {
     const button = event.target.closest('[data-reward]:enabled');
-    if (!button) return;
-    const items = $('rewardItems');
-    items.querySelectorAll('[data-reward]').forEach(card => card.disabled = true);
+    if (!button || rewardBuying) return;
+    rewardBuying = true;
+    $('close').disabled = $('continueRound').disabled = true;
+    $('rewardItems').querySelectorAll('[data-reward]').forEach(card => card.disabled = true);
     const purchase = await buyPiece(Number(button.dataset.reward));
+    rewardBuying = false;
+    $('close').disabled = $('continueRound').disabled = false;
     renderWardrobe();
-    if ($('modal').hidden || $('rewardItems') !== items) return;
     if (!purchase.ok) {
       renderOfferCards();
       $('rewardStatus').textContent = purchase.message;
@@ -754,6 +766,16 @@ function showReward() {
     continuePlaying();
     feedback('Sua peça nova já está no provador! ✨');
   };
+}
+
+function markCollectionsViewed() {
+  if (closetCategory !== 'new' || testOutfit !== null) return;
+  void updateProgress(state => {
+    const unseen = Object.values(collections).filter(item => !state.viewedCollectionReleases.includes(item.launchId));
+    if (!unseen.length) return { ok:false };
+    state.viewedCollectionReleases.push(...unseen.map(item => item.launchId));
+    return { ok:true };
+  });
 }
 function updateClosetOutfit() {
   $('closetDoll').innerHTML = dollHTML();
@@ -831,6 +853,7 @@ function renderClosetBody() {
 
   renderClosetItems();
   updateClosetOutfit();
+  markCollectionsViewed();
 
   $('closetItems').onclick = async event => {
     const card = event.target.closest('[data-wear]:enabled');
@@ -857,6 +880,7 @@ function renderClosetBody() {
       button.className = 'primary';
       button.setAttribute('aria-pressed', 'true');
       renderClosetItems();
+      markCollectionsViewed();
     };
   });
 
