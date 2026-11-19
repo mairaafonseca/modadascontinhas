@@ -152,6 +152,7 @@ main .layout { grid-template-columns: minmax(0, 2.05fr) minmax(310px, .93fr); ga
 .closet-count { padding:6px 14px; border-radius:999px; background:#f8dce4; }
 .closet-items .unlock-note { margin:14px 0 4px; background:#fff2c9; color:var(--f-ink); }
 .closet-status { min-height:20px; margin:8px 0 0; color:var(--f-pink-deep); font-weight:900; text-align:center; }
+.outfit-card.locked .mystery-piece { display:grid; place-items:center; font-size:clamp(28px,5vw,56px); filter:none; }
 
 /* Settings and report use identical labelled rows. */
 .modal[data-view="settings"] .dialog, .modal[data-view="report"] .dialog { width:min(1024px,96vw); }
@@ -204,15 +205,12 @@ main .layout { grid-template-columns: minmax(0, 2.05fr) minmax(310px, .93fr); ga
 .modal[data-view="reward"] .dialog-top h2::before { display:none; }
 .modal[data-view="reward"] .dialog-top h2::after { content:""; position:absolute; left:50%; top:-45px; width:73px; height:64px; transform:translateX(-50%); background:url("assets/figma-icons/reward_star.png") center / contain no-repeat; }
 .modal[data-view="reward"] .intro-message { margin:0 0 10px; font-size:21px; font-weight:900; color:var(--f-ink); }
-.modal[data-view="reward"] .intro-message::after { content:"Escolha uma peça"; display:block; margin-top:7px; font-size:20px; }
-.modal[data-view="reward"] .reward-grid { gap:17px; }
-.modal[data-view="reward"] .outfit-card { padding:13px 9px; border:2px solid #e4aab9; border-radius:22px; }
-.modal[data-view="reward"] .outfit-card::before { content:"♡"; display:block; height:23px; color:#e45e88; font-size:28px; line-height:18px; }
-.modal[data-view="reward"] .outfit-card span, .modal[data-view="reward"] .outfit-card small { display:none; }
-.modal[data-view="reward"] .outfit-card .reward-price,
-.modal[data-view="reward"] .outfit-card .reward-free { display:inline-flex; align-items:center; justify-content:center; min-height:28px; margin-top:5px; padding:4px 9px; border-radius:999px; font-size:13px; font-weight:900; }
-.modal[data-view="reward"] .outfit-card .reward-price { background:#fff0b7; color:#77500f; }
-.modal[data-view="reward"] .outfit-card .reward-free { background:#e5f0c8; color:#49672f; }
+.modal[data-view="reward"] .reward-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(6px,2vw,17px); }
+.modal[data-view="reward"] .outfit-card { padding:clamp(4px,1vw,13px); border:2px solid #e4aab9; border-radius:22px; text-align:center; }
+.modal[data-view="reward"] .outfit-card .reward-price { display:inline-block; margin:0; padding:4px 8px; border-radius:999px; font-size:13px; font-weight:900; background:#fff0b7; color:#77500f; }
+.modal[data-view="reward"] .reward-buy { display:block; width:100%; margin-top:7px; padding:6px 4px; font-size:clamp(12px,2vw,16px); border-radius:14px; }
+.modal[data-view="reward"] .reward-buy:disabled:hover { transform:none; }
+#earned { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; }
 .reward-status { min-height:24px; margin:4px 0 0; color:var(--f-pink-deep); font-weight:900; text-align:center; }
 
 /* A collection release uses the same dialog language, without changing any wardrobe artwork. */
@@ -221,7 +219,6 @@ main .layout { grid-template-columns: minmax(0, 2.05fr) minmax(310px, .93fr); ga
 .modal[data-view="collection-launch"] .dialog-top h2::before { content:""; flex:0 0 48px; margin:0; background:url("assets/figma-icons/reward_star.png") center / contain no-repeat; }
 .collection-launch { padding:12px 10px 4px; text-align:center; }
 .collection-launch p { margin:0; color:var(--f-ink); font-size:24px; font-weight:900; }
-.collection-launch .collection-price { margin-top:13px; color:#76551b; font-size:17px; }
 #viewNewCollection::before { content:""; width:26px; height:26px; background:url("assets/figma-icons/reward_star.png") center / contain no-repeat; }
 
 /* Every primary action has a matching Figma icon. */
