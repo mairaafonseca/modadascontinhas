@@ -117,16 +117,13 @@ main .layout { grid-template-columns: minmax(0, 2.05fr) minmax(310px, .93fr); ga
 .modal { z-index: 1000; background: rgba(78,28,47,.4); }
 .dialog { width:min(1120px,96vw); max-height:94vh; padding:0 28px 24px; border:1.5px solid var(--f-outline); border-radius:clamp(16px,2.5vw,30px); background:var(--f-card); }
 .dialog-top { position:relative; display:flex; min-height:68px; margin:0 -28px 20px; padding:10px 62px; align-items:center; justify-content:center; border-bottom:1px solid var(--f-outline); background:linear-gradient(180deg,#fff8da,#ffebaa); }
-.dialog-top h2 { margin:0; color:var(--f-ink); font-size:clamp(29px,3vw,43px); }
-.dialog-top h2::before { display:inline-grid; width:48px; height:48px; margin-right:15px; place-items:center; border-radius:0; color:var(--f-pink-deep); vertical-align:-10px; }
+.dialog-top h2 { display:flex; align-items:center; justify-content:center; gap:15px; margin:0; color:var(--f-ink); font-size:clamp(19px,2.5vw,31px); text-align:center; }
+.dialog-top h2::before { flex:none; width:48px; height:48px; }
 .modal[data-view="closet"] .dialog-top h2::before { content:""; background:url("assets/figma-closet.png") center / contain no-repeat; }
 .modal[data-view="settings"] .dialog-top h2::before { content:""; background:url("assets/figma-gear.png") center / contain no-repeat; }
 .modal[data-view="report"] .dialog-top h2::before { content:""; background:url("assets/figma-icons/bars.png") center / contain no-repeat; }
 .modal[data-view="help"] .dialog-top h2::before { content:""; background:url("assets/figma-bulb.png") center / contain no-repeat; }
-.modal[data-view="help"] .dialog-top h2 { display:flex; align-items:center; justify-content:center; gap:15px; }
-.modal[data-view="help"] .dialog-top h2::before { flex:0 0 48px; margin-right:0; vertical-align:baseline; }
-.modal[data-view="help-empty"] .dialog-top h2 { display:flex; align-items:center; justify-content:center; gap:15px; white-space:nowrap; }
-.modal[data-view="help-empty"] .dialog-top h2::before { content:""; flex:0 0 48px; margin-right:0; background:url("assets/figma-bulb.png") center / contain no-repeat; }
+.modal[data-view="help-empty"] .dialog-top h2::before { content:""; background:url("assets/figma-bulb.png") center / contain no-repeat; }
 .modal[data-view="game-help"] .dialog { width:min(645px,96vw); }
 .modal[data-view="game-help"] .dialog-top h2::before { content:""; background:url("assets/figma-icons/question.png") center / contain no-repeat; }
 .game-help-list { margin:0 auto 20px; padding-inline-start:1.5em; color:var(--f-ink); font-size:clamp(16px,2.1vw,21px); line-height:1.45; }
@@ -140,8 +137,8 @@ main .layout { grid-template-columns: minmax(0, 2.05fr) minmax(310px, .93fr); ga
 .modal[data-view="closet"] .dialog { width:min(1000px,96vw); height:min(650px,94dvh); }
 .modal[data-view="closet"] .closet-layout { grid-template-columns:minmax(0,2.35fr) minmax(0,1fr); }
 .modal[data-view="closet"] .dialog-top { min-height:52px; margin-bottom:12px; padding-block:7px; }
-.modal[data-view="closet"] .dialog-top h2 { display:flex; align-items:center; justify-content:center; gap:8px; font-size:clamp(19px,2.5vw,31px); }
-.modal[data-view="closet"] .dialog-top h2::before { flex:0 0 32px; width:32px; height:32px; margin-right:0; vertical-align:baseline; }
+.modal[data-view="closet"] .dialog-top h2 { gap:8px; }
+.modal[data-view="closet"] .dialog-top h2::before { width:32px; height:32px; }
 .modal[data-view="closet"] .dialog-top .close { top:50%; transform:translateY(-50%); width:34px; height:34px; font-size:23px; }
 .closet-tabs { display:grid; grid-template-columns:repeat(10, minmax(0,1fr)); gap:8px; width:100%; padding-bottom:10px; border-bottom:1px solid #edcfda; }
 .closet-tabs button, .closet-controls .wardrobe-icon-button { width:100%; height:58px; border-color:var(--f-line); border-radius:18px; background:#fff9fa; }
@@ -194,10 +191,6 @@ main .layout { grid-template-columns: minmax(0, 2.05fr) minmax(310px, .93fr); ga
 .modal[data-view="settings"] .language-button .current-language { background:var(--f-pink-deep); color:#fff; }
 .modal[data-view="settings"] #groupFraction { position:relative; grid-column:2; grid-row:1; justify-self:start; inline-size:64px; block-size:34px; margin:0; appearance:none; opacity:1; pointer-events:auto; border:2px solid #9caf5a; border-radius:999px; background:radial-gradient(circle at 15px 50%, #fff 0 10px, transparent 11px), #dfe8bd; cursor:pointer; transition:.18s ease; }
 .modal[data-view="settings"] #groupFraction:checked { border-color:#c33b68; background:radial-gradient(circle at calc(100% - 15px) 50%, #fff 0 10px, transparent 11px), #ef6a92; }
-.modal[data-view="settings"] .dialog-top h2 { display:flex; align-items:center; justify-content:center; gap:15px; }
-.modal[data-view="settings"] .dialog-top h2::before { flex:0 0 48px; margin-right:0; vertical-align:baseline; }
-.modal[data-view="report"] .dialog-top h2 { display:flex; align-items:center; justify-content:center; gap:15px; }
-.modal[data-view="report"] .dialog-top h2::before { flex:0 0 48px; margin-right:0; vertical-align:baseline; }
 .modal[data-view="settings"] .settings-title-button { line-height:1; }
 #openReport { grid-template-columns:1fr auto; text-align:left; }
 #openReport > b { display:flex; align-items:center; gap:9px; }
@@ -212,13 +205,21 @@ main .layout { grid-template-columns: minmax(0, 2.05fr) minmax(310px, .93fr); ga
 .report-bars { display:grid; gap:12px; }.report-bar-row { display:grid; grid-template-columns:minmax(112px,.85fr) minmax(100px,2.2fr) auto; align-items:center; gap:12px; color:var(--f-ink); font-weight:900; }
 .report-bar-track { height:18px; overflow:hidden; border:2px solid #ead0d7; border-radius:999px; background:#f7e6eb; }
 .report-bar-track i { display:block; width:var(--bar); height:100%; border-radius:999px; transition:width .2s ease; }
+.report-week-summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(135px,100%),1fr)); gap:8px; margin:0 0 14px; }
+.report-week-summary > div { padding:10px 12px; border:1px solid var(--f-line); border-radius:16px; background:#fff4f6; }
+.report-week-summary dt { font-size:14px; font-weight:800; }
+.report-week-summary dd { margin:2px 0 0; font-size:24px; font-weight:900; }
+.report-table:has(.report-week-caption) { overflow-x:auto; }
+.report-week-caption { padding:8px 12px; text-align:start; font-weight:900; }
+.report-history { margin:16px 0; }
+.report-history summary { width:fit-content; padding-block:5px; cursor:pointer; font-weight:900; }
 .report-bar-row.has-value .report-bar-track i { min-width:10px; }.report-bar-correct .report-bar-track i { background:linear-gradient(90deg,#bdd96f,#86aa4e); }.report-bar-wrong .report-bar-track i { background:linear-gradient(90deg,#ff99af,#e95682); }.report-bar-accuracy .report-bar-track i { background:linear-gradient(90deg,#ffe78e,#f3bf4f); }
 .report-table { overflow:hidden; border:2px solid var(--f-line); border-radius:20px; background:#fffdfa; }.report-table table { color:var(--f-ink); }.report-table thead { background:#f9dce4; color:var(--f-ink); }.report-table th,.report-table td { border-color:#efd2da; }.report-table tbody tr:nth-child(even) { background:#fff8fa; }
 
 .reward-balance { display:none; }
 .modal[data-view="reward"] .dialog { --reward-padding:clamp(10px,3vw,42px); --reward-pink-gradient:linear-gradient(180deg,#fce7e2,#f8cfd3); width:min(820px,96vw); padding:0 var(--reward-padding) 28px; border-radius:clamp(14px,2vw,30px); }
 .modal[data-view="reward"] .dialog-top { display:grid; grid-template-columns:1fr minmax(0,auto) 1fr; min-height:52px; margin:0 calc(-1 * var(--reward-padding)) 0; padding:7px clamp(10px,2vw,26px); border-bottom:1px solid var(--ds-rose-deep); background:var(--reward-pink-gradient); }
-.modal[data-view="reward"] .dialog-top h2 { margin:0; padding:0; border:0; background:none; box-shadow:none; color:var(--f-ink); font-size:clamp(16px,2.5vw,31px); text-align:center; }
+.modal[data-view="reward"] .dialog-top h2 { margin:0; padding:0; border:0; background:none; box-shadow:none; color:var(--f-ink); }
 .modal[data-view="reward"] .dialog-top h2::before { display:none; }
 .modal[data-view="reward"] .dialog-top .close { position:static; justify-self:end; transform:none; }
 .modal[data-view="reward"] .reward-balance { display:inline-flex; gap:5px; align-items:center; font-size:clamp(15px,2vw,27px); font-weight:900; color:var(--f-ink); }
@@ -287,7 +288,7 @@ main .layout { grid-template-columns: minmax(0, 2.05fr) minmax(310px, .93fr); ga
   main { padding:16px 12px 32px; } #modes .mode{min-height:61px;padding:6px}.mode-icon{width:34px;height:34px}#modes .mode b{font-size:15px}
   main .layout{grid-template-columns:1fr}.exercise-layout{grid-template-columns:minmax(0,1fr) minmax(135px,36%);gap:8px}.exercise-main{padding:12px 7px;min-height:0}.exercise-main .equation{min-height:148px;font-size:clamp(29px,8vw,47px)}.keypad{gap:5px}.keypad button{min-height:45px;border-radius:12px}.exercise-actions .primary{min-height:58px;font-size:22px}.exercise-actions .primary::before{width:28px;height:28px;margin-right:8px;font-size:18px}.help-control{min-height:62px;margin-top:8px}.exercise-actions .help{width:50px;height:50px;min-height:50px}.help-dot{width:17px;height:17px}.help-meter-label{font-size:18px}
   .layout .wardrobe{width:100%}.layout .doll-scene{min-height:420px}.wardrobe .layered-doll{height:420px}.wardrobe-heading span{font-size:25px}#closet{font-size:20px}
-  .dialog{padding:0 15px 16px}.dialog-top{margin:0 -15px 14px;padding:14px 65px 12px;min-height:65px}.dialog-top h2{font-size:25px}.dialog-top h2::before{width:35px;height:35px;margin-right:7px}.close{right:12px;width:34px;height:34px}.settings-group{grid-template-columns:1fr;padding:13px}.table-options{grid-column:1}.settings-group .small{grid-column:1}.modal[data-view="closet"] .dialog{height:calc(100dvh - 12px)}.closet-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.closet-tabs button{width:42px;height:42px}.closet-preview .closet-prover{min-height:280px}
+  .dialog{padding:0 15px 16px}.dialog-top{margin:0 -15px 14px;padding:14px 65px 12px;min-height:65px}.dialog-top h2{gap:7px}.dialog-top h2::before{width:35px;height:35px}.close{right:12px;width:34px;height:34px}.settings-group{grid-template-columns:1fr;padding:13px}.table-options{grid-column:1}.settings-group .small{grid-column:1}.modal[data-view="closet"] .dialog{height:calc(100dvh - 12px)}.closet-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.closet-tabs button{width:42px;height:42px}.closet-preview .closet-prover{min-height:280px}
 }
 
 /* Fidelity pass: measurements mirror the 1448 × 1086 Figma frames. */

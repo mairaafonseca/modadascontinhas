@@ -110,7 +110,40 @@ function renderBreakdown(current){
     return `<tr${detail?' class="report-table-detail"':''}><th scope="row">${name}</th><td>${attempts}</td><td>${attempts?correctPct+'%':'—'}</td><td>${attempts?100-correctPct+'%':'—'}</td><td>${stats.helped===undefined?'—':stats.correct-stats.helped}</td><td>${stats.helped??'—'}</td><td>${stats.helpsUsed??(unallocated?'—':0)}</td></tr>`;
   }).join('')}</tbody></table></div>${unallocated>0?`<p class="small">Ajudinhas antigas sem atividade registrada: ${unallocated}</p>`:''}${current.partialTables?'<p class="small">Para este dia, os números por tabuada incluem apenas as tentativas antigas ainda disponíveis, além das novas.</p>':''}`;
 }
-function renderReport(date=dateKey()){
+function renderReport() {
+  const today = new Date();
+  const formatDate = new Intl.DateTimeFormat(document.documentElement.lang, { day:'2-digit', month:'2-digit' });
+  const days = Array.from({length:7}, (_, index) => {
+    const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6 + index, 12);
+    const key = dateKey(date);
+    return { key, label:formatDate.format(date), stats:data.days[key] ?? emptyStats() };
+  });
+  const totals = emptyStats();
+  for (const {stats} of days) {
+    totals.correct += stats.correct;
+    totals.wrong += stats.wrong;
+  }
+  const accuracy = ({correct, wrong}) => correct + wrong ? `${Math.round(100 * correct / (correct + wrong))}%` : '—';
+  // Each recorded correct answer earns one star. Purchases only change the balance.
+  const metrics = [
+    ['Acertos', totals.correct], ['Erros', totals.wrong],
+    ['Taxa de acerto', accuracy(totals)], ['Estrelinhas ganhas', totals.correct]
+  ];
+  get('reportContent').innerHTML = `
+    <h3>Últimos 7 dias</h3>
+    <dl class="report-week-summary">${metrics.map(([label,value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>
+    ${totals.correct + totals.wrong ? '' : '<p class="small">Nenhuma tentativa registrada nos últimos 7 dias.</p>'}
+    <div class="report-table"><table>
+      <caption class="report-week-caption">Resultados por dia</caption>
+      <thead><tr><th scope="col">Data</th>${metrics.map(([label]) => `<th scope="col">${label}</th>`).join('')}</tr></thead>
+      <tbody>${days.map(({key,label,stats}) => `<tr><th scope="row"><time datetime="${key}">${label}</time></th>
+        <td>${stats.correct}</td><td>${stats.wrong}</td><td>${accuracy(stats)}</td><td>${stats.correct}</td></tr>`).join('')}</tbody>
+    </table></div>
+    <details class="report-history"><summary>Histórico diário</summary><div id="dailyReportContent"></div></details>`;
+  renderDailyReport();
+}
+
+function renderDailyReport(date=dateKey()){
   const current=data.days[date]??emptyDay();
   initializeTables(current);
   const total=current.correct+current.wrong;
@@ -119,7 +152,7 @@ function renderReport(date=dateKey()){
   const wrongPct=total?Math.round(current.wrong/total*100):0;
   const bar=(label,value,percent,tone)=>`<div class="report-bar-row report-bar-${tone}${Number(percent)>0?' has-value':''}"><span>${label}</span><div class="report-bar-track"><i style="--bar:${percent}%"></i></div><b>${value}</b></div>`;
   get('dailyReportContent').innerHTML=`<p>Consulte os resultados por dia. Cada envio de resposta conta como uma tentativa; campos vazios não contam.</p><label class="report-date" for="reportDate">Dia do relatório <input type="date" id="reportDate" value="${date}" max="${dateKey()}"></label><section class="report-chart" aria-label="Resumo do relatório"><div class="report-chart-head"><b>Resumo geral</b><span>${total} ${total===1?'tentativa':'tentativas'}</span></div><div class="report-bars">${bar('Acertos',current.correct,correctPct,'correct')}${bar('Erros',current.wrong,wrongPct,'wrong')}${bar('Aproveitamento',`${accuracy}%`,accuracy,'accuracy')}</div></section><p class="report-notes">Acertos sem ajuda: ${current.correct-current.helped} · Acertos com ajuda: ${current.helped} · Ajudas usadas: ${current.helpsUsed}</p>${renderBreakdown(current)}<h3>Últimas tentativas do dia</h3>${current.logs.length?`<p class="small">Mostrando até 100 tentativas recentes. Os totais incluem todas as tentativas do dia.</p><div class="report-table"><table><thead><tr><th>Hora</th><th>Grupo</th><th>Desafio</th><th>Resposta</th><th>Resultado</th></tr></thead><tbody>${current.logs.slice().reverse().map(log=>{const at=new Date(log.at),time=at.toLocaleTimeString('nl-NL',{hour:'2-digit',minute:'2-digit'});return `<tr><td>${escape(time)}</td><td>${modeNames[log.mode]||''}</td><td>${escape(log.question)}</td><td>${escape(log.answer)}</td><td><span class="${log.correct?'report-correct':'report-wrong'}">${log.correct?'✓ Acerto':'↻ Erro'}</span>${log.helped?'<small>Com ajuda</small>':''}${!log.correct?`<small>Esperado: ${escape(log.expected)}</small>`:''}</td></tr>`}).join('')}</tbody></table></div>`:'<p class="intro-message">Nenhuma tentativa registrada neste dia.</p>'}<p class="small">Os dados ficam neste navegador.</p>`;
-  get('reportDate').onchange=()=>{const selected=get('reportDate').value;if(/^\d{4}-\d{2}-\d{2}$/.test(selected)&&selected<=dateKey())renderReport(selected)};
+  get('reportDate').onchange=()=>{const selected=get('reportDate').value;if(/^\d{4}-\d{2}-\d{2}$/.test(selected)&&selected<=dateKey())renderDailyReport(selected)};
 }
 return {begin,useHelp,record,renderReport,setTestMode};
 })();
