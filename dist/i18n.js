@@ -7,6 +7,20 @@ const brands={
   'en':{name:'Solve & Style',logo:'assets/logo-solve-style.png'}
 };
 const entries={
+'Como funciona?':'Hoe werkt het?',
+'Acerte uma conta e ganhe 1 estrelinha!':'Los een som goed op en verdien 1 ster!',
+'Todas as peças custam estrelinhas.':'Alle kledingstukken kosten sterren.',
+'Descubra novas peças enquanto joga.':'Ontdek nieuwe kleding terwijl je speelt.',
+'Compre as peças que você descobriu no guarda-roupa.':'Koop de kleding die je hebt ontdekt in de kledingkast.',
+'Guarde estrelinhas para comprar peças especiais!':'Spaar sterren voor speciale kledingstukken!',
+'Você acertou! +1 estrelinha!':'Goed gedaan! +1 ster!',
+'Você acertou!':'Goed gedaan!',
+'Continuar jogando':'Verder spelen',
+'Ver ofertas':'Bekijk aanbiedingen',
+'Comprar':'Kopen',
+'Economizar':'Sparen',
+'Peça surpresa':'Verrassingskledingstuk',
+'Peças adquiridas':'Gekochte kledingstukken',
 'Voltar à conta':'Terug naar de oefening',
 'Como ganhar ajudas':'Hoe verdien je hulpbeurten?', 'Acerte 3 desafios para ganhar 1 ajudinha!':'Los 3 oefeningen goed op en verdien 1 hulpbeurt!', 'Ajudas':'Hulpbeurten', 'Para ganhar ajudas, acerte três desafios':'Verdien hulpbeurten door drie oefeningen goed op te lossen',
 '💡 Ajudas ilimitadas':'💡 Onbeperkte hulpbeurten',
@@ -179,7 +193,9 @@ entries['Vamos contar as bolinhas?']='Zullen we de bolletjes tellen?';
 const replacements=Object.entries(entries).sort((a,b)=>b[0].length-a[0].length);
 const unit={unidades:'eenheden',dezenas:'tientallen',centenas:'honderdtallen'};
 function nl(source){let t=source;
-t=t.replace(/As peças especiais custam (\d+) estrelinhas cada\./g,'De speciale kledingstukken kosten elk $1 sterren.').replace(/Faltam (\d+) estrelinhas? para esta peça\./g,'Je hebt nog $1 sterren nodig voor dit kledingstuk.').replace(/⭐ (\d+) estrelinhas/g,'⭐ $1 sterren').replace(/Escolha uma peça grátis ou compre uma novidade com suas estrelinhas\./g,'Kies een gratis kledingstuk of koop iets nieuws met je sterren.');
+t=t.replace(/Faltam? (\d+) estrelinhas? para esta peça\./g,(_,n)=>`Je hebt nog ${n} ${n==='1'?'ster':'sterren'} nodig voor dit kledingstuk.`)
+.replace(/(Saldo: |⭐ | · )(\d+) estrelinhas?\b/g,(_,prefix,n)=>`${prefix==='Saldo: '?'Beschikbaar: ':prefix}${n} ${n==='1'?'ster':'sterren'}`)
+.replace(/(\d+\/\d+) peças\b/g,'$1 kledingstukken');
 // Full dynamic phrases are translated before reusable labels.
 t=t.replace(/Tabuada do (\d+)/g,'Tafel van $1').replace(/Pedir ajuda\. Saldo: (\d+)/g,'Om hulp vragen. Beschikbaar: $1').replace(/Acertos sem ajuda: (\d+) · Acertos com ajuda: (\d+) · Ajudas usadas: (\d+)/g,'Goed zonder hulp: $1 · Goed met hulp: $2 · Gebruikte hulpbeurten: $3');
 t=t.replace(/Uma descoberta na tabuada do (\d+)\./g,'Ontdek de tafel van $1.').replace(/Desafio (\d+)/g,'Oefening $1').replace(/\((\d+) peças\)/g,'($1 kledingstukken)').replace(/Conte as partes coloridas desta (pizza|torta)\./g,(_,f)=>`Tel de gekleurde delen van deze ${f==='torta'?'taart':'pizza'}.`).replace(/(pizza|torta) dividida em (\d+) partes iguais(?:, (\d+) coloridas)?/g,(_,f,d,n)=>`${f==='torta'?'Taart':'Pizza'} verdeeld in ${d} gelijke delen${n?`, waarvan ${n} gekleurd`:''}`)
