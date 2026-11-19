@@ -350,8 +350,7 @@ function loadProgress() {
     previousOffers: Array.isArray(saved.previousOffers) ? saved.previousOffers : [],
     viewedCollectionReleases: Array.isArray(saved.viewedCollectionReleases) ? saved.viewedCollectionReleases : [],
     viewedCollectionCategories: Array.isArray(saved.viewedCollectionCategories) ? saved.viewedCollectionCategories : [],
-    worn: saved.worn && typeof saved.worn === 'object' ? {...saved.worn} : {},
-    seenCollectionReleases: Array.isArray(saved.seenCollectionReleases) ? [...saved.seenCollectionReleases] : []
+    worn: saved.worn && typeof saved.worn === 'object' ? {...saved.worn} : {}
   };
 }
 
@@ -674,25 +673,6 @@ function closeDialog() {
 }
 $('close').onclick=closeDialog;
 document.addEventListener('keydown',e=>{if($('modal').hidden)return;if(e.key==='Escape')closeDialog();if(e.key==='Tab'){let nodes=[...$('modal').querySelectorAll('button,input,select,summary,[tabindex="0"]')].filter(x=>!x.disabled&&!x.hidden);let visible=nodes.filter(node=>node.getClientRects().length);let f=visible[0],l=visible.at(-1);if(e.shiftKey&&document.activeElement===f){e.preventDefault();l.focus()}else if(!e.shiftKey&&document.activeElement===l){e.preventDefault();f.focus()}}});
-async function showCollectionLaunch() {
-  if (!$('modal').hidden || solved) return;
-  const release = await updateProgress(state => {
-    if (!$('modal').hidden || solved) return { ok:false };
-    const collection = Object.values(collections).find(item => !state.seenCollectionReleases.includes(item.launchId));
-    if (!collection) return { ok:false };
-    state.seenCollectionReleases.push(collection.launchId);
-    return { ok:true };
-  });
-  if (!release.ok || !$('modal').hidden || solved) return;
-  openDialog('collection-launch', 'Nova coleção lançada', '<div class="collection-launch"><p>Acerte continhas para descobrir novas peças.</p></div>');
-  $('dialogActions').innerHTML = '<button type="button" class="primary" id="viewNewCollection">Ver novidades</button><button type="button" class="secondary" id="collectionLater">Depois</button>';
-  $('viewNewCollection').onclick = () => {
-    closetCategory = 'new';
-    openDialog('closet', 'Guarda-roupa', '');
-    renderClosetBody();
-  };
-  $('collectionLater').onclick = closeDialog;
-}
 function rewardCandidates(state) {
   const priority = id => 2 * Number(state.previousOffers.includes(id)) + Number(state.discovered.includes(id));
   const unowned = shuffled(catalogIds.filter(id => pieceState(id, state) !== 'owned'))
@@ -774,15 +754,15 @@ function hasUnseenCollectionPiece(id, state) {
     !state.viewedCollectionCategories.includes(`${release.launchId}:${piece.category}`));
 }
 
-function unseenCollectionCategories() {
-  return new Set(catalogIds.filter(id => hasUnseenCollectionPiece(id, progress)).map(id => catalog.get(id).category));
+function hasUnseenCollections() {
+  return catalogIds.some(id => hasUnseenCollectionPiece(id, progress));
 }
 
 function renderWardrobeProgress() {
   const ids = wardrobeIds();
   const ownedCount = ids.filter(id => pieceState(id) === 'owned').length;
   $('count').textContent = `${ownedCount}/${ids.length}`;
-  const hasNews = unseenCollectionCategories().size > 0;
+  const hasNews = hasUnseenCollections();
   $('closetNews').hidden = !hasNews;
   $('closet').setAttribute('aria-label', `Guarda-roupa · ${ownedCount} de ${ids.length} peças adquiridas${hasNews ? ' · Novidades' : ''}`);
 }
@@ -850,18 +830,13 @@ function renderClosetItems({ preserveScroll = false } = {}) {
 
 function closetCategoryButton(key, label) {
   const active = closetCategory === key;
-  return `<button type="button" class="${active ? 'primary' : 'secondary'}" data-category="${key}" aria-pressed="${active}" aria-label="${label}" title="${label}">${wardrobeIcon(key)}<span class="category-news" aria-hidden="true" hidden>!</span></button>`;
+  const badge = key === 'new' ? '<span class="category-news" aria-hidden="true" hidden>!</span>' : '';
+  return `<button type="button" class="${active ? 'primary' : 'secondary'}" data-category="${key}" aria-pressed="${active}" aria-label="${label}" title="${label}">${wardrobeIcon(key)}${badge}</button>`;
 }
 
 function syncClosetNews() {
-  const unseen = unseenCollectionCategories();
-  $('dialogBody').querySelectorAll('[data-category]').forEach(button => {
-    const key = button.dataset.category;
-    const hasNews = key === 'new' ? unseen.size > 0 : unseen.has(key);
-    button.querySelector('.category-news').hidden = !hasNews;
-    const label = closetCategories[key];
-    button.setAttribute('aria-label', hasNews && key !== 'new' ? `${label} · Novidades` : label);
-  });
+  const badge = $('dialogBody').querySelector('.category-news');
+  if (badge) badge.hidden = !hasUnseenCollections();
 }
 
 function renderClosetBody() {
@@ -1128,4 +1103,3 @@ $('help').onclick=()=>{
 };
 renderWardrobe();
 newProblem();
-window.setTimeout(showCollectionLaunch, 280);

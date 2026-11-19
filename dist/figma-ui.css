@@ -233,14 +233,6 @@ main .layout { grid-template-columns: minmax(0, 2.05fr) minmax(310px, .93fr); ga
 .reward-status { margin:0 0 6px; color:var(--f-pink-deep); font-weight:900; text-align:center; }
 .reward-status:empty { margin:0; }
 
-/* A collection release uses the same dialog language, without changing any wardrobe artwork. */
-.modal[data-view="collection-launch"] .dialog { width:min(650px,94vw); }
-.modal[data-view="collection-launch"] .dialog-top h2 { display:flex; align-items:center; justify-content:center; gap:14px; }
-.modal[data-view="collection-launch"] .dialog-top h2::before { content:""; flex:0 0 48px; margin:0; background:url("assets/figma-icons/reward_star.png") center / contain no-repeat; }
-.collection-launch { padding:12px 10px 4px; text-align:center; }
-.collection-launch p { margin:0; color:var(--f-ink); font-size:24px; font-weight:900; }
-#viewNewCollection::before { content:""; width:26px; height:26px; background:url("assets/figma-icons/reward_star.png") center / contain no-repeat; }
-
 /* Every primary action has a matching Figma icon. */
 .dialog .primary { display:inline-flex; align-items:center; justify-content:center; gap:10px; }
 #saveSettings::before, #chooseAgain::before { content:""; width:28px; height:28px; background:url("assets/figma-check-circle.png") center / contain no-repeat; }
