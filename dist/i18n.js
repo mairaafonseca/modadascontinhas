@@ -184,6 +184,8 @@ Object.assign(entries, {
   'Comprar':'Kopen',
   'Economizar':'Sparen',
   'Nova!':'Nieuw!',
+  'Novos':'Nieuw',
+  'peças adquiridas':'kledingstukken verzameld',
   'Já é sua':'Al van jou',
   'Esta peça já é sua.':'Dit kledingstuk is al van jou.',
   'Descubra esta peça jogando.':'Ontdek dit kledingstuk tijdens het spelen.',
