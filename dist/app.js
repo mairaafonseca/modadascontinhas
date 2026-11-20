@@ -398,7 +398,16 @@ function outfitName(id) {
   return catalog.get(id).name;
 }
 
-const priceFor = id => catalog.get(id)?.price;
+function priceFor(id) {
+  const catalogPrice = catalog.get(id)?.price;
+  if (catalogPrice === undefined) return undefined;
+  // Convert the catalog's original price bands into stars charged to the player.
+  if (catalogPrice <= 2) return 1;
+  if (catalogPrice <= 5) return 2;
+  if (catalogPrice <= 8) return 3;
+  if (catalogPrice <= 12) return 4;
+  return 5;
+}
 const pieceState = (id, state = progress) => state.owned.includes(id) ? 'owned'
   : state.discovered.includes(id) ? 'discovered' : 'undiscovered';
 const starAmount = amount => `${amount} estrelinha${amount === 1 ? '' : 's'}`;
@@ -714,8 +723,7 @@ function rewardCandidates(state) {
 
   const guaranteeBasic = state.economyCorrect <= 3 && unowned.some(id => priceFor(id) === 1);
   const affordable = id => priceFor(id) <= state.stars;
-  const hasAffordable = unowned.some(affordable);
-  const tier = price => price >= 10 ? 4 : price >= 5 ? 3 : price >= 2 ? 2 : 1;
+  const affordableTarget = Math.min(2, unowned.filter(affordable).length);
 
   function select(ids) {
     const lowestPrice = Math.min(...ids.map(priceFor));
@@ -723,12 +731,13 @@ function rewardCandidates(state) {
       ?? ids.find(id => priceFor(id) === lowestPrice);
 
     const remaining = ids.filter(id => id !== first);
-    const highestTier = Math.max(...remaining.map(id => tier(priceFor(id))));
-    const last = remaining.find(id => tier(priceFor(id)) === highestTier && slotFor(id) !== slotFor(first))
-      ?? remaining.find(id => tier(priceFor(id)) === highestTier);
+    const highestPrice = Math.max(...remaining.map(priceFor));
+    const premium = remaining.filter(id => priceFor(id) === highestPrice);
+    const last = premium.find(id => slotFor(id) !== slotFor(first)) ?? premium[0];
     const middleOptions = remaining.filter(id => id !== last);
     const between = middleOptions.filter(id => priceFor(id) > priceFor(first) && priceFor(id) < priceFor(last));
-    const middlePool = between.length ? between : middleOptions;
+    const middlePool = [between.filter(affordable), middleOptions.filter(affordable), between, middleOptions]
+      .find(pool => pool.length);
     const middle = middlePool.find(id => slotFor(id) !== slotFor(first) && slotFor(id) !== slotFor(last))
       ?? middlePool[0];
     return [first, middle, last].sort((a, b) => priceFor(a) - priceFor(b));
@@ -739,7 +748,7 @@ function rewardCandidates(state) {
   for (const repeated of selected) {
     const alternatives = unowned.filter(id => id !== repeated);
     if (guaranteeBasic && !alternatives.some(id => priceFor(id) === 1)) continue;
-    if (hasAffordable && !alternatives.some(affordable)) continue;
+    if (alternatives.filter(affordable).length < affordableTarget) continue;
     return select(alternatives);
   }
   return selected;
