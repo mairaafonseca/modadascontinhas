@@ -2,6 +2,8 @@
 
 Ao criar ou alterar qualquer coleção, use uma peça já aprovada da mesma categoria como referência. Confira cada item antes de concluir.
 
+Consulte o [guia de encaixe das roupas](docs/guia-encaixe-roupas.md) para preparar a arte, posicionar as peças na boneca e reproduzir os testes da coleção Princesas.
+
 - [ ] Exporte cada peça com fundo transparente. Confira o recorte em fundo claro e escuro para detectar halos, pixels soltos e sobras de itens vizinhos. Em uma prancha compartilhada, deixe uma margem transparente entre as peças.
 - [ ] Mantenha a perspectiva da boneca. Em roupas, confira golas, mangas e barras e retire o forro ou verso que ficaria escondido quando a roupa fosse vestida. Em sapatos, preserve o contorno frontal e deixe a abertura dos pés transparente. Confira que a arte não contém calcanhares, pernas ou partes da boneca de referência.
 - [ ] Confira cada peça vestida. Alinhe decotes, punhos, cinturas e sapatos aos pontos correspondentes do corpo. Procure trechos da roupa de base, dedos ou pele aparecendo através de áreas de tecido e espaços vazios onde o corpo deveria estar visível.
