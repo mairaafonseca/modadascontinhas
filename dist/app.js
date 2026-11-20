@@ -323,7 +323,7 @@ const catalog = new Map([
   ...collectionPieces.map((piece, index) => [136 + index, piece]),
   ...christmasPieces,
   ...princessPieces.map(({id, ...piece}) => [id, {
-    ...piece, sheet:'colecao-princesas', size:[1448,1086], fitted:true, collection:'princesas'
+    ...piece, sheet:'colecao-princesas', sheetVersion:5, size:[1448,1086], fitted:true, collection:'princesas'
   }])
 ]);
 const catalogIds = [...catalog.keys()].filter(id => !retiredPieceIds.has(id));
@@ -428,13 +428,33 @@ function fittedShoePlacement({placement: [x, y, width, height], box: [, , artwor
   return [x + (width - fittedWidth) / 2, y + height - fittedHeight, fittedWidth, fittedHeight];
 }
 
+function dollPiecePlacement(piece) {
+  if (piece.slot === 'shoes' && !piece.fittedFootwear) return fittedShoePlacement(piece);
+  if (piece.collection !== 'princesas') return piece.placement;
+
+  const [x, y, width, height] = piece.placement;
+  const scale = piece.dollScale ?? 0.9;
+  const drop = piece.slot === 'top' ? height * scale * 0.05 : 0;
+  // Scale around the fitting point, keeping collars, waistbands and soles in place.
+  const anchorX = piece.slot === 'head' ? x + width / 2 : 157;
+  const anchorY = {hair: 60, shoes: y + height}[piece.slot] ?? y;
+  return [anchorX + (x - anchorX) * scale, anchorY + (y - anchorY) * scale + drop,
+    width * scale, height * scale];
+}
+
 function garmentSprite(id, preview = false) {
   const piece = catalog.get(id);
   const legacyShoe = piece.slot === 'shoes' && !piece.fittedFootwear;
-  const [x, y, width, height] = preview ? [8, 8, 134, 134] :
-    (legacyShoe ? fittedShoePlacement(piece) : piece.placement);
+  const [x, y, width, height] = preview ? [8, 8, 134, 134] : dollPiecePlacement(piece);
   const fit = preview || legacyShoe || !piece.fitted ? 'xMidYMid meet' : 'none';
-  return `<svg x="${x}" y="${y}" width="${width}" height="${height}" viewBox="${piece.box.join(' ')}" preserveAspectRatio="${fit}"><image href="assets/${piece.sheet}.png" width="${piece.size[0]}" height="${piece.size[1]}"/></svg>`;
+  const [left, top, spriteWidth, spriteHeight] = piece.box;
+  const assetVersion = piece.sheetVersion ? `?v=${piece.sheetVersion}` : '';
+  // Clip the sheet to the piece before scaling it to fit the card or the doll.
+  return `<svg x="${x}" y="${y}" width="${width}" height="${height}" viewBox="0 0 ${spriteWidth} ${spriteHeight}" preserveAspectRatio="${fit}">
+    <svg width="${spriteWidth}" height="${spriteHeight}" viewBox="${left} ${top} ${spriteWidth} ${spriteHeight}" overflow="hidden">
+      <image href="assets/${piece.sheet}.png${assetVersion}" width="${piece.size[0]}" height="${piece.size[1]}"/>
+    </svg>
+  </svg>`;
 }
 
 function pieceHTML(id) {
@@ -462,10 +482,14 @@ let exclusions='';
 // Only hide body regions actually covered by a garment. Exposed arms, neck,
 // belly and legs remain part of the base doll and return when clothes are removed.
 const hasNarrowDress = [108, 136, 147].includes(worn.dress);
+const fittedPrincessTop = catalog.get(worn.top)?.collection === 'princesas';
 const overlayHair = catalog.get(worn.hair)?.overlayHair;
 const replaceHead = worn.hair !== undefined && !overlayHair;
 if(worn.bottom!==undefined||(worn.dress!==undefined&&!hasNarrowDress))exclusions+='<path d="M123 162H192V197H123Z" fill="black"/>';
-if(worn.top!==undefined||(worn.dress!==undefined&&!hasNarrowDress))exclusions+='<path d="M137 116H179L183 162H131Z" fill="black"/>';
+// The close-set balloon legs have a narrow seam below the base shorts.
+if(worn.bottom===246)exclusions+='<path d="M154 195H161V208H154Z" fill="black"/>';
+if(fittedPrincessTop)exclusions+='<path d="M137 116H179L180 149H134Z" fill="black"/>';
+else if(worn.top!==undefined||(worn.dress!==undefined&&!hasNarrowDress))exclusions+='<path d="M137 116H179L183 162H131Z" fill="black"/>';
 // Follow the transparent gap between the ponytail and the right shoulder.
 if(replaceHead)exclusions+='<path d="M55 0H265V130H193L191 124L187 115L181 111L174 106H55Z" fill="black"/>';
 if(overlayHair)exclusions+='<path d="M174 0H232V127H189L180 111L182 98L195 83L204 72L191 48Z" fill="black"/>';
@@ -935,7 +959,32 @@ window.addEventListener('storage', event => {
   if (dialogKind === 'closet') refreshCloset();
   if (dialogKind === 'reward') renderOfferCards();
 });
-$('closet').onclick=()=>{openDialog('closet','Guarda-roupa','');renderClosetBody()};
+$('closet').onclick = () => {
+  openDialog('closet', 'Guarda-roupa', '');
+  $('dialogTitle').innerHTML = `<button type="button" class="closet-test-icon" id="closetTestIcon"
+    aria-label="Teste de roupas" aria-pressed="${testOutfit !== null}">
+    <img src="assets/figma-closet.png" alt="" width="32" height="32">
+  </button>Guarda-roupa`;
+  const icon = $('closetTestIcon');
+  let taps = 0;
+  icon.onclick = () => {
+    if (++taps < 5) return;
+    taps = 0;
+    const enabled = testOutfit === null;
+    testOutfit = enabled ? currentOutfit() : null;
+    learning.setTestMode(enabled);
+    icon.setAttribute('aria-pressed', String(enabled));
+    renderWardrobe();
+    if (enabled && closetCategory !== 'all') {
+      closetCategory = 'all';
+      renderClosetBody();
+    } else {
+      refreshCloset();
+    }
+    $('closetStatus').textContent = enabled ? 'Teste de roupas ativado.' : 'Teste de roupas encerrado.';
+  };
+  renderClosetBody();
+};
 $('gameHelp').onclick = event => {
   openDialog('game-help', 'Como funciona?', `<ul class="game-help-list">
     <li>Acerte uma conta para ganhar uma estrelinha.</li>
@@ -954,33 +1003,10 @@ function showReport(){
   $('dialogActions').innerHTML='<button class="primary" id="reportBack">Voltar</button>';
   $('reportBack').onclick=()=>{ $('modal').hidden=true; $('settings').click(); };
 }
-$('settings').onclick=()=>{if(rewardPending){if($('check').hidden)showReward();return}openDialog('settings','Ajustes',`<div class="settings-group settings-language"><b>🌐 Idioma</b><div id="settingsLanguage"></div></div><div class="settings-group"><label><input type="checkbox" id="groupMultiply" ${config.groups.multiply?'checked':''}> 🧮 Tabuadas</label><p class="small">Escolha as tabuadas</p><div class="table-options">${supportedTables.map(t=>`<label class="table-option"><input type="checkbox" data-table="${t}" ${config.tables.includes(t)?'checked':''}>${t}</label>`).join('')}</div></div><div class="settings-group"><label><input type="checkbox" id="groupAdd" ${config.groups.add?'checked':''}> ➕ Soma</label><label class="small" for="digits">Dígitos</label><select id="digits">${[1,2,3].map(d=>`<option value="${d}" ${config.digits===d?'selected':''}>${d} dígitos</option>`).join('')}</select></div><div class="settings-group"><label><input type="checkbox" id="groupFraction" ${config.groups.fraction?'checked':''}> ◔ Frações</label><p class="small">Pizzas e tortas</p></div><button type="button" class="settings-group" id="openReport"><b>▂▅▇ Relatório de aprendizagem</b><span>›</span></button><div id="wardrobeTest" hidden></div><p id="settingsError" class="settings-error" role="alert"></p>`);setupSettingsTools();$('openReport').onclick=showReport;$('dialogActions').innerHTML='<button class="primary" id="saveSettings">Salvar</button>';$('saveSettings').onclick=async()=>{const groups={multiply:$('groupMultiply').checked,add:$('groupAdd').checked,fraction:$('groupFraction').checked},tables=[...document.querySelectorAll('[data-table]:checked')].map(x=>Number(x.dataset.table));if(!Object.values(groups).some(Boolean))return $('settingsError').textContent='Ative pelo menos um grupo de aventuras.';if(groups.multiply&&!tables.length)return $('settingsError').textContent='Escolha pelo menos uma tabuada.';const nextConfig={groups,tables:tables.length?tables:config.tables,digits:Number($('digits').value)};const settingsError=$('settingsError');const result=await updateProgress(state=>{state.config=nextConfig;return {ok:true}});if(!result.ok){settingsError.textContent=result.message;return}config=nextConfig;deck=[];if(!groups[mode])mode=Object.keys(groups).find(k=>groups[k]);round=1;$('modal').hidden=true;newProblem()}};
+$('settings').onclick=()=>{if(rewardPending){if($('check').hidden)showReward();return}openDialog('settings','Ajustes',`<div class="settings-group settings-language"><b>🌐 Idioma</b><div id="settingsLanguage"></div></div><div class="settings-group"><label><input type="checkbox" id="groupMultiply" ${config.groups.multiply?'checked':''}> 🧮 Tabuadas</label><p class="small">Escolha as tabuadas</p><div class="table-options">${supportedTables.map(t=>`<label class="table-option"><input type="checkbox" data-table="${t}" ${config.tables.includes(t)?'checked':''}>${t}</label>`).join('')}</div></div><div class="settings-group"><label><input type="checkbox" id="groupAdd" ${config.groups.add?'checked':''}> ➕ Soma</label><label class="small" for="digits">Dígitos</label><select id="digits">${[1,2,3].map(d=>`<option value="${d}" ${config.digits===d?'selected':''}>${d} dígitos</option>`).join('')}</select></div><div class="settings-group"><label><input type="checkbox" id="groupFraction" ${config.groups.fraction?'checked':''}> ◔ Frações</label><p class="small">Pizzas e tortas</p></div><button type="button" class="settings-group" id="openReport"><b>▂▅▇ Relatório de aprendizagem</b><span>›</span></button><p id="settingsError" class="settings-error" role="alert"></p>`);setupSettingsTools();$('openReport').onclick=showReport;$('dialogActions').innerHTML='<button class="primary" id="saveSettings">Salvar</button>';$('saveSettings').onclick=async()=>{const groups={multiply:$('groupMultiply').checked,add:$('groupAdd').checked,fraction:$('groupFraction').checked},tables=[...document.querySelectorAll('[data-table]:checked')].map(x=>Number(x.dataset.table));if(!Object.values(groups).some(Boolean))return $('settingsError').textContent='Ative pelo menos um grupo de aventuras.';if(groups.multiply&&!tables.length)return $('settingsError').textContent='Escolha pelo menos uma tabuada.';const nextConfig={groups,tables:tables.length?tables:config.tables,digits:Number($('digits').value)};const settingsError=$('settingsError');const result=await updateProgress(state=>{state.config=nextConfig;return {ok:true}});if(!result.ok){settingsError.textContent=result.message;return}config=nextConfig;deck=[];if(!groups[mode])mode=Object.keys(groups).find(k=>groups[k]);round=1;$('modal').hidden=true;newProblem()}};
 function setupSettingsTools() {
   mountSettingsIcons();
   atelieLanguage.mount($('settingsLanguage'));
-  const tools = $('wardrobeTest');
-  const title = $('dialogTitle');
-  title.innerHTML = '<button type="button" class="settings-title-button">Ajustes</button>';
-  let taps = 0;
-  title.firstElementChild.onclick = () => {
-    taps++;
-    if (taps === 5) showTestControls();
-  };
-
-  function showTestControls() {
-    tools.hidden = false;
-    tools.className = 'settings-group';
-    tools.innerHTML = `<button type="button" class="secondary" id="toggleWardrobeTest">${testOutfit ? 'Encerrar teste de roupas' : 'Ativar teste de roupas'}</button>`;
-    $('toggleWardrobeTest').onclick = () => {
-      testOutfit = testOutfit === null ? currentOutfit() : null;
-      learning.setTestMode(testOutfit !== null);
-      renderWardrobe();
-      showTestControls();
-      $('toggleWardrobeTest').focus();
-    };
-  }
-
-  if (testOutfit) showTestControls();
 }
 
 function mountSettingsIcons() {
