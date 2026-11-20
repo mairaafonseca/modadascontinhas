@@ -226,13 +226,18 @@ Object.assign(entries, {
   'Esta peça já é sua.':'Dit kledingstuk is al van jou.',
   'Descubra esta peça jogando.':'Ontdek dit kledingstuk tijdens het spelen.',
   'Peça surpresa':'Verrassingsstuk',
+  'Peças adquiridas':'Gekochte kledingstukken',
+  'Coleção de Natal':'Kerstcollectie',
+  'Coleção Princesas':'Prinsessencollectie',
+  'Guarde estrelinhas para comprar peças especiais!':'Spaar sterren voor speciale kledingstukken!',
   'Não foi possível salvar o progresso. Tente de novo.':'Je voortgang kon niet worden opgeslagen. Probeer het opnieuw.'
 });
 const replacements=Object.entries(entries).sort((a,b)=>b[0].length-a[0].length);
 const unit={unidades:'eenheden',dezenas:'tientallen',centenas:'honderdtallen'};
 function nl(source){let t=source;
 t=t.replace(/Faltam? (\d+) estrelinhas? para esta peça\./g,(_,amount)=>`Je hebt nog ${amount} ${amount === '1' ? 'ster' : 'sterren'} nodig voor dit kledingstuk.`)
-  .replace(/(\d+) estrelinhas?(?=\s|$)/g,(_,amount)=>`${amount} ${amount === '1' ? 'ster' : 'sterren'}`);
+  .replace(/(\d+) estrelinhas?(?=\s|$)/g,(_,amount)=>`${amount} ${amount === '1' ? 'ster' : 'sterren'}`)
+  .replace(/(\d+\/\d+) peças\b/g,'$1 kledingstukken');
 // Full dynamic phrases are translated before reusable labels.
 t=t.replace(/Tabuada do (\d+)/g,'Tafel van $1').replace(/Pedir ajuda\. Saldo: (\d+)/g,'Om hulp vragen. Beschikbaar: $1').replace(/Acertos sem ajuda: (\d+) · Acertos com ajuda: (\d+) · Ajudas usadas: (\d+)/g,'Goed zonder hulp: $1 · Goed met hulp: $2 · Gebruikte hulpbeurten: $3');
 t=t.replace(/Uma descoberta na tabuada do (\d+)\./g,'Ontdek de tafel van $1.').replace(/Desafio (\d+)/g,'Oefening $1').replace(/\((\d+) peças\)/g,'($1 kledingstukken)').replace(/Conte as partes coloridas desta (pizza|torta)\./g,(_,f)=>`Tel de gekleurde delen van deze ${f==='torta'?'taart':'pizza'}.`).replace(/(pizza|torta) dividida em (\d+) partes iguais(?:, (\d+) coloridas)?/g,(_,f,d,n)=>`${f==='torta'?'Taart':'Pizza'} verdeeld in ${d} gelijke delen${n?`, waarvan ${n} gekleurd`:''}`)

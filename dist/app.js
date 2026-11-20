@@ -351,6 +351,8 @@ function loadProgress() {
     stars: Number.isSafeInteger(stars) && stars >= 0 ? stars : 0,
     owned: Array.isArray(saved.owned) ? [...new Set(saved.owned)] : [],
     discovered: Array.isArray(saved.discovered) ? [...new Set(saved.discovered)] : [],
+    economyCorrect: Number.isSafeInteger(saved.economyCorrect) && saved.economyCorrect >= 0 ? saved.economyCorrect : 0,
+    seenCollectionReleases: Array.isArray(saved.seenCollectionReleases) ? saved.seenCollectionReleases : [],
     previousOffers: Array.isArray(saved.previousOffers) ? saved.previousOffers : [],
     viewedCollectionReleases: Array.isArray(saved.viewedCollectionReleases) ? saved.viewedCollectionReleases : [],
     viewedCollectionCategories: Array.isArray(saved.viewedCollectionCategories) ? saved.viewedCollectionCategories : [],
@@ -672,6 +674,7 @@ $('form').onsubmit = async event => {
   renderModes();
   const reward = await updateProgress(state => {
     state.stars += 1;
+    state.economyCorrect += 1;
     const items = rewardCandidates(state);
     state.discovered = [...new Set([...state.discovered, ...items])];
     state.previousOffers = items;
@@ -706,24 +709,40 @@ function closeDialog() {
 $('close').onclick=closeDialog;
 document.addEventListener('keydown',e=>{if($('modal').hidden)return;if(e.key==='Escape')closeDialog();if(e.key==='Tab'){let nodes=[...$('modal').querySelectorAll('button,input,select,summary,[tabindex="0"]')].filter(x=>!x.disabled&&!x.hidden);let visible=nodes.filter(node=>node.getClientRects().length);let f=visible[0],l=visible.at(-1);if(e.shiftKey&&document.activeElement===f){e.preventDefault();l.focus()}else if(!e.shiftKey&&document.activeElement===l){e.preventDefault();f.focus()}}});
 function rewardCandidates(state) {
-  const priority = id => 2 * Number(state.previousOffers.includes(id)) + Number(state.discovered.includes(id));
-  const unowned = shuffled(catalogIds.filter(id => pieceState(id, state) !== 'owned'))
-    .sort((a, b) => priority(a) - priority(b));
+  const unowned = shuffled(catalogIds.filter(id => pieceState(id, state) !== 'owned'));
   if (unowned.length <= 3) return unowned.sort((a, b) => priceFor(a) - priceFor(b));
 
-  const affordable = unowned.filter(id => priceFor(id) <= state.stars);
-  const overBudget = unowned.filter(id => priceFor(id) > state.stars);
-  // Reserve one higher-priced piece even if the player can afford every remaining item.
-  const prices = unowned.map(priceFor).sort((a, b) => a - b);
-  const aspirational = overBudget[0] ?? unowned.find(id => priceFor(id) > prices[1])
-    ?? unowned.find(id => priceFor(id) > prices[0]) ?? unowned[0];
-  const available = affordable.filter(id => id !== aspirational);
-  const lowerPriced = available.filter(id => priceFor(id) < priceFor(aspirational));
-  const selected = [...new Set([...lowerPriced, ...available])].slice(0, 2);
-  selected.push(aspirational);
-  const alternatives = unowned.filter(id => !selected.includes(id));
-  selected.push(...alternatives.slice(0, 3 - selected.length));
-  return selected.sort((a, b) => priceFor(a) - priceFor(b));
+  const guaranteeBasic = state.economyCorrect <= 3 && unowned.some(id => priceFor(id) === 1);
+  const affordable = id => priceFor(id) <= state.stars;
+  const hasAffordable = unowned.some(affordable);
+  const tier = price => price >= 10 ? 4 : price >= 5 ? 3 : price >= 2 ? 2 : 1;
+
+  function select(ids) {
+    const lowestPrice = Math.min(...ids.map(priceFor));
+    const first = ids.find(guaranteeBasic ? id => priceFor(id) === 1 : affordable)
+      ?? ids.find(id => priceFor(id) === lowestPrice);
+
+    const remaining = ids.filter(id => id !== first);
+    const highestTier = Math.max(...remaining.map(id => tier(priceFor(id))));
+    const last = remaining.find(id => tier(priceFor(id)) === highestTier && slotFor(id) !== slotFor(first))
+      ?? remaining.find(id => tier(priceFor(id)) === highestTier);
+    const middleOptions = remaining.filter(id => id !== last);
+    const between = middleOptions.filter(id => priceFor(id) > priceFor(first) && priceFor(id) < priceFor(last));
+    const middlePool = between.length ? between : middleOptions;
+    const middle = middlePool.find(id => slotFor(id) !== slotFor(first) && slotFor(id) !== slotFor(last))
+      ?? middlePool[0];
+    return [first, middle, last].sort((a, b) => priceFor(a) - priceFor(b));
+  }
+
+  const selected = select(unowned);
+  if (state.previousOffers.length !== selected.length || selected.some(id => !state.previousOffers.includes(id))) return selected;
+  for (const repeated of selected) {
+    const alternatives = unowned.filter(id => id !== repeated);
+    if (guaranteeBasic && !alternatives.some(id => priceFor(id) === 1)) continue;
+    if (hasAffordable && !alternatives.some(affordable)) continue;
+    return select(alternatives);
+  }
+  return selected;
 }
 
 function continuePlaying() {
@@ -736,26 +755,27 @@ function continuePlaying() {
 let rewardBuying = false;
 
 function rewardCard(id) {
-  const owned = pieceState(id) === 'owned';
   const price = priceFor(id);
   const affordable = price <= progress.stars;
-  const label = owned ? 'Já é sua' : affordable ? 'Comprar' : 'Economizar';
+  const label = affordable ? 'Comprar' : 'Economizar';
   const isNew = hasUnseenCollectionPiece(id, progress);
   return `<div class="outfit-card">
     <div class="reward-card-top"><small class="reward-price" aria-label="${starAmount(price)}"><img src="assets/estrela-pontos.svg" alt="">${price}</small>${isNew ? '<small class="reward-new">Nova!</small>' : ''}</div>
     ${pieceHTML(id)}<span class="reward-name">${outfitName(id)}</span>
-    <button type="button" class="primary reward-buy" data-reward="${id}" aria-label="${label} · ${outfitName(id)} · ${starAmount(price)}" ${rewardBuying || owned || !affordable ? 'disabled' : ''}>${label}</button></div>`;
+    <button type="button" class="primary reward-buy" data-reward="${id}" aria-label="${label} · ${outfitName(id)} · ${starAmount(price)}" ${rewardBuying || !affordable ? 'disabled' : ''}>${label}</button></div>`;
 }
 
 function renderOfferCards() {
   $('rewardBalance').setAttribute('aria-label', starAmount(progress.stars));
   $('rewardStars').textContent = progress.stars;
-  $('rewardItems').innerHTML = offers.map(rewardCard).join('');
+  const remaining = offers.filter(id => pieceState(id) !== 'owned');
+  $('rewardItems').innerHTML = remaining.map(rewardCard).join('');
+  $('rewardItems').hidden = !remaining.length;
+  $('rewardComplete').hidden = catalogIds.some(id => pieceState(id) !== 'owned');
 }
 
 function showReward() {
-  const title = offers.length ? 'Você acertou!' : 'Sua coleção está completa!';
-  openDialog('reward', title, '<div class="reward-grid" id="rewardItems"></div><p class="reward-status" id="rewardStatus" aria-live="polite"></p>');
+  openDialog('reward', 'Você acertou!', '<div class="reward-grid" id="rewardItems"></div><p class="intro-message" id="rewardComplete" role="status" hidden>Sua coleção está completa!</p><p class="reward-status" id="rewardStatus" aria-live="polite"></p>');
   renderOfferCards();
   $('dialogActions').innerHTML = '<button type="button" class="secondary" id="continueRound"><span aria-hidden="true">▷</span> Continuar jogando</button>';
   $('continueRound').onclick = continuePlaying;
@@ -774,9 +794,31 @@ function showReward() {
       $('rewardStatus').textContent = purchase.message;
       return;
     }
-    continuePlaying();
-    feedback('Sua peça nova já está no provador! ✨');
+    renderOfferCards();
+    $('rewardStatus').textContent = 'Peça comprada! Agora ela é sua.';
+    $('continueRound').focus();
   };
+}
+
+async function showCollectionLaunch() {
+  if (!$('modal').hidden || solved) return;
+  const result = await updateProgress(state => {
+    const collection = Object.values(collections).find(({launchId}) =>
+      !state.seenCollectionReleases.includes(launchId) && !state.viewedCollectionReleases.includes(launchId));
+    if (!collection) return { ok:false };
+    state.seenCollectionReleases.push(collection.launchId);
+    return { ok:true, collection };
+  });
+  if (!result.ok || !$('modal').hidden || solved) return;
+  openDialog('collection-launch', 'Nova coleção lançada',
+    `<div class="collection-launch"><p>${result.collection.name}</p><p>Faça continhas para receber novas peças.</p></div>`);
+  $('dialogActions').innerHTML = '<button type="button" class="primary" id="viewNewCollection">Ver novidades</button><button type="button" class="secondary" id="collectionLater">Depois</button>';
+  $('viewNewCollection').onclick = () => {
+    closetCategory = 'new';
+    $('closet').focus();
+    $('closet').click();
+  };
+  $('collectionLater').onclick = closeDialog;
 }
 
 function hasUnseenCollectionPiece(id, state) {
@@ -823,6 +865,8 @@ async function markCollectionsViewed(category = closetCategory) {
   if (!$('modal').hidden && dialogKind === 'closet') syncClosetNews();
   if (!$('modal').hidden && dialogKind === 'reward') renderOfferCards();
 }
+let closetSelection = null;
+
 function updateClosetOutfit() {
   $('closetDoll').innerHTML = dollHTML();
 }
@@ -849,15 +893,60 @@ function renderClosetItems({ preserveScroll = false } = {}) {
     const preview = `${pieceHTML(id)}<span class="closet-piece-name">${name}</span>`;
     if (testOutfit === null && state === 'discovered') {
       const price = priceFor(id);
-      const affordable = progress.stars >= price;
-      const action = affordable ? 'Comprar' : 'Economizar';
-      return `<div class="outfit-card for-sale">
+      const waitingForStars = price > progress.stars;
+      const chosen = closetSelection === id;
+      return `<button type="button" class="outfit-card for-sale${chosen ? ' selected' : ''}" data-shop="${id}" aria-pressed="${chosen}">
         <small class="price-tag" aria-label="${starAmount(price)}"><img src="assets/estrela-pontos.svg" alt="">${price}</small>${preview}
-        <button type="button" class="primary closet-buy" data-buy="${id}" aria-label="${action} · ${name} · ${starAmount(price)}" ${affordable ? '' : 'disabled'}>${action}</button></div>`;
+        ${waitingForStars ? `<small>${missingStars(price - progress.stars)}</small>` : ''}</button>`;
     }
     return `<button type="button" class="outfit-card${selected ? ' selected' : ''}" data-wear="${id}" aria-label="${name}" aria-pressed="${selected}">${preview}</button>`;
   }).join('')}</div><p class="unlock-note">${testOutfit ? 'Todas as peças estão disponíveis para teste.' : 'Acerte continhas para descobrir novas peças.'}</p>` : '<p class="intro-message">Ainda não há peças nesta categoria. Acerte desafios para escolher novidades!</p>';
   closetItems.scrollTop = scrollTop;
+}
+
+function updateClosetProgress() {
+  const ids = wardrobeIds();
+  const ownedCount = ids.filter(id => pieceState(id) === 'owned').length;
+  $('closetCount').textContent = `${ownedCount}/${ids.length} peças`;
+  $('closetProgress').max = ids.length;
+  $('closetProgress').value = ownedCount;
+}
+
+function renderClosetPurchase() {
+  const panel = $('closetPurchase');
+  const id = closetSelection;
+  panel.hidden = id === null || testOutfit !== null || pieceState(id) !== 'discovered';
+  if (panel.hidden) return;
+
+  const price = priceFor(id);
+  panel.innerHTML = `<span class="price-tag">⭐ ${starAmount(price)}</span>
+    <button type="button" class="primary" id="buyClosetPiece" aria-label="Comprar · ${outfitName(id)} · ${starAmount(price)}" ${progress.stars < price ? 'disabled' : ''}>Comprar</button>`;
+  $('buyClosetPiece').onclick = async event => {
+    event.currentTarget.disabled = true;
+    const result = await buyPiece(id);
+    renderWardrobe();
+    if ($('modal').hidden || $('closetPurchase') !== panel) return;
+    if (result.ok || pieceState(id) !== 'discovered') closetSelection = null;
+    const complete = catalogIds.every(pieceId => pieceState(pieceId) === 'owned');
+    $('closetStatus').textContent = !result.ok ? result.message : complete
+      ? 'Peça comprada! Agora ela é sua. Sua coleção está completa!'
+      : 'Peça comprada! Agora ela é sua.';
+    refreshCloset();
+    const target = $('closetItems').querySelector(`[data-wear="${id}"], [data-shop="${id}"]`);
+    target?.focus({ preventScroll:true });
+  };
+}
+
+function syncClosetCategoryStates() {
+  const wornIds = Object.values(currentOutfit());
+  $('dialogBody').querySelectorAll('[data-category]').forEach(button => {
+    const category = button.dataset.category;
+    const equipped = category !== 'all' && wornIds.some(id =>
+      category === 'new' ? isNewCollectionPiece(id) : catalog.get(id)?.category === category);
+    button.classList.toggle('equipped', equipped);
+    button.querySelector('.category-state')?.remove();
+    if (equipped) button.insertAdjacentHTML('beforeend', '<span class="category-state" aria-hidden="true">×</span>');
+  });
 }
 
 function closetCategoryButton(key, label) {
@@ -872,11 +961,15 @@ function syncClosetNews() {
 }
 
 function renderClosetBody() {
+  closetSelection = null;
   $('dialogBody').innerHTML = `<div class="closet-layout">
     <div class="closet-catalog">
       <div class="closet-tabs" aria-label="Categorias de roupas">${Object.entries(closetCategories).map(([key,label]) => closetCategoryButton(key, label)).join('')}</div>
       <div class="closet-items" id="closetItems" tabindex="0" role="region" aria-label="Peças do guarda-roupa"></div>
+      <div class="closet-purchase" id="closetPurchase" hidden></div>
       <p class="closet-status" id="closetStatus" aria-live="polite"></p>
+      <progress class="closet-progress" id="closetProgress" aria-label="Peças adquiridas"></progress>
+      <p class="closet-count" id="closetCount"></p>
     </div>
     <div class="closet-preview">
       <div class="closet-prover" id="closetDoll"></div>
@@ -884,37 +977,48 @@ function renderClosetBody() {
     </div>
   </div>`;
 
-  renderClosetItems();
-  updateClosetOutfit();
-  syncClosetNews();
+  refreshCloset();
   void markCollectionsViewed();
 
   $('closetItems').onclick = async event => {
-    const control = event.target.closest('button[data-buy]:enabled, button[data-wear]:enabled');
+    const control = event.target.closest('button[data-shop]:enabled, button[data-wear]:enabled');
     if (!control) return;
     const items = event.currentTarget;
-    const buying = control.hasAttribute('data-buy');
-    const id = Number(buying ? control.dataset.buy : control.dataset.wear);
+    $('closetStatus').textContent = '';
+    if (control.hasAttribute('data-shop')) {
+      const id = Number(control.dataset.shop);
+      closetSelection = closetSelection === id ? null : id;
+      for (const card of items.querySelectorAll('[data-shop]')) {
+        const selected = Number(card.dataset.shop) === closetSelection;
+        card.classList.toggle('selected', selected);
+        card.setAttribute('aria-pressed', String(selected));
+      }
+      renderClosetPurchase();
+      return;
+    }
+    closetSelection = null;
+    const id = Number(control.dataset.wear);
     control.disabled = true;
-    const result = buying ? await buyPiece(id) : await updateOutfit(outfit => toggleOutfitPiece(outfit, id));
+    const result = await updateOutfit(outfit => toggleOutfitPiece(outfit, id));
     renderWardrobe();
     if ($('modal').hidden || $('closetItems') !== items) return;
-    $('closetStatus').textContent = result.ok ? (buying ? 'Peça comprada! Agora ela é sua.' : '') : result.message;
+    $('closetStatus').textContent = result.ok ? '' : result.message;
     refreshCloset();
-    const target = items.querySelector(`[data-wear="${id}"], [data-buy="${id}"]:enabled`) ?? items;
-    target.focus({ preventScroll:true });
+    items.querySelector(`[data-wear="${id}"]`)?.focus({ preventScroll:true });
   };
 
   $('dialogBody').querySelectorAll('[data-category]').forEach(button => {
     button.onclick = () => {
       if (closetCategory === button.dataset.category) return;
       const previous = button.parentElement.querySelector('[aria-pressed="true"]');
-      previous.className = 'secondary';
+      previous.classList.replace('primary', 'secondary');
       previous.setAttribute('aria-pressed', 'false');
       closetCategory = button.dataset.category;
-      button.className = 'primary';
+      button.classList.replace('secondary', 'primary');
       button.setAttribute('aria-pressed', 'true');
+      closetSelection = null;
       renderClosetItems();
+      renderClosetPurchase();
       $('closetStatus').textContent = '';
       void markCollectionsViewed();
     };
@@ -936,7 +1040,10 @@ function renderClosetBody() {
 }
 function refreshCloset() {
   renderClosetItems({ preserveScroll: true });
+  renderClosetPurchase();
+  updateClosetProgress();
   updateClosetOutfit();
+  syncClosetCategoryStates();
   syncClosetNews();
 }
 
@@ -990,6 +1097,7 @@ $('gameHelp').onclick = event => {
     <li>Acerte uma conta para ganhar uma estrelinha.</li>
     <li>Use suas estrelinhas para comprar as peças que você descobrir.</li>
     <li>Toque em Continuar jogando para guardar suas estrelinhas.</li>
+    <li>Guarde estrelinhas para comprar peças especiais!</li>
     <li>No guarda-roupa, toque em uma peça sua para vestir ou tirar.</li>
     <li>Precisa de ajuda com a conta? Toque na lâmpada.</li>
   </ul>`);
@@ -1149,3 +1257,4 @@ $('help').onclick=()=>{
 };
 renderWardrobe();
 newProblem();
+window.setTimeout(showCollectionLaunch, 280);
