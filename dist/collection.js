@@ -121,3 +121,27 @@ const collectionBoards = [
     ]
   }
 ];
+
+const princessPieces = [
+  {id:236, name:'Vestido azul de cristal', category:'dress', slot:'dress', price:8, box:[40,5,280,324], placement:[76,104,162,184]},
+  {id:237, name:'Vestido dourado de rosas', category:'dress', slot:'dress', price:10, box:[325,8,268,322], placement:[81,105,152,186]},
+  {id:238, name:'Vestido lilás bordado', category:'dress', slot:'dress', price:10, box:[594,4,274,331], placement:[74,103,166,188]},
+  {id:239, name:'Vestido de pétalas verdes', category:'dress', slot:'dress', price:8, box:[871,5,246,325], placement:[80,108,154,182]},
+  {id:240, name:'Vestido turquesa de pérolas', category:'dress', slot:'dress', price:10, box:[1125,12,300,318], placement:[69,104,176,186]},
+  {id:241, name:'Blusa azul de mangas rubi', category:'top', slot:'top', price:5, box:[53,358,233,159], placement:[103,103,108,59]},
+  {id:242, name:'Casaco azul bordado', category:'top', slot:'top', price:6, box:[309,344,275,177], placement:[90,103,134,73]},
+  {id:243, name:'Blusa turquesa com arabescos', category:'top', slot:'top', price:5, box:[605,352,225,160], placement:[104,103,106,59]},
+  {id:244, name:'Blusa coral geométrica', category:'top', slot:'top', price:3, box:[880,353,232,165], placement:[105,104,104,59]},
+  {id:245, name:'Blusa rosa com gola branca', category:'top', slot:'top', price:3, box:[1156,352,254,161], placement:[102,105,110,59]},
+  {id:246, name:'Calça balonê turquesa', category:'pants', slot:'bottom', price:5, box:[64,541,200,256], placement:[108,151,98,133]},
+  {id:247, name:'Calça azul bordada', category:'pants', slot:'bottom', price:5, box:[368,543,156,255], placement:[125,156,65,134], dollScale:1},
+  {id:248, name:'Short coral geométrico', category:'shorts', slot:'bottom', price:3, box:[604,562,217,157], placement:[121,156,73,52], dollScale:1},
+  {id:249, name:'Saia rosa com bordado floral', category:'skirt', slot:'bottom', price:6, box:[847,542,289,255], placement:[74,156,166,119]},
+  {id:250, name:'Saia dourada de baile', category:'skirt', slot:'bottom', price:5, box:[1141,541,285,263], placement:[77,156,160,125]},
+  {id:251, name:'Trança dourada com flores', category:'hair', slot:'hair', price:7, box:[18,812,201,257], placement:[104,6,121,151], overlayHair:true},
+  {id:252, name:'Tiara dourada com rosa', category:'head', slot:'head', price:5, box:[227,851,233,126], placement:[105,14,104,56]},
+  {id:253, name:'Presilha de flores lilás', category:'head', slot:'head', price:2, box:[477,842,210,133], placement:[175,29,35,22]},
+  {id:254, name:'Tiara azul com estrela', category:'head', slot:'head', price:5, box:[695,845,243,133], placement:[105,10,105,56]},
+  {id:255, name:'Sapatilhas azuis de laço', category:'shoes', slot:'shoes', price:5, box:[947,846,232,166], placement:[128,272,59,40], fittedFootwear:true},
+  {id:256, name:'Sapatilhas douradas de rosa', category:'shoes', slot:'shoes', price:5, box:[1191,846,231,166], placement:[128,272,59,40], fittedFootwear:true}
+];

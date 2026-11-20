@@ -7,20 +7,6 @@ const brands={
   'en':{name:'Solve & Style',logo:'assets/logo-solve-style.png'}
 };
 const entries={
-'Como funciona?':'Hoe werkt het?',
-'Acerte uma conta e ganhe 1 estrelinha!':'Los een som goed op en verdien 1 ster!',
-'Todas as peças custam estrelinhas.':'Alle kledingstukken kosten sterren.',
-'Descubra novas peças enquanto joga.':'Ontdek nieuwe kleding terwijl je speelt.',
-'Compre as peças que você descobriu no guarda-roupa.':'Koop de kleding die je hebt ontdekt in de kledingkast.',
-'Guarde estrelinhas para comprar peças especiais!':'Spaar sterren voor speciale kledingstukken!',
-'Você acertou! +1 estrelinha!':'Goed gedaan! +1 ster!',
-'Você acertou!':'Goed gedaan!',
-'Continuar jogando':'Verder spelen',
-'Ver ofertas':'Bekijk aanbiedingen',
-'Comprar':'Kopen',
-'Economizar':'Sparen',
-'Peça surpresa':'Verrassingskledingstuk',
-'Peças adquiridas':'Gekochte kledingstukken',
 'Voltar à conta':'Terug naar de oefening',
 'Como ganhar ajudas':'Hoe verdien je hulpbeurten?', 'Acerte 3 desafios para ganhar 1 ajudinha!':'Los 3 oefeningen goed op en verdien 1 hulpbeurt!', 'Ajudas':'Hulpbeurten', 'Para ganhar ajudas, acerte três desafios':'Verdien hulpbeurten door drie oefeningen goed op te lossen',
 '💡 Ajudas ilimitadas':'💡 Onbeperkte hulpbeurten',
@@ -190,12 +176,68 @@ const entries={
 };
 entries['Vamos descobrir no ateliê']='Laten we het samen ontdekken';
 entries['Vamos contar as bolinhas?']='Zullen we de bolletjes tellen?';
+Object.assign(entries, {
+  'Você acertou! +1 estrelinha!':'Goed gedaan! +1 ster!',
+  'Ver ofertas':'Bekijk aanbiedingen',
+  'Continuar jogando':'Verder spelen',
+  'Acerte continhas para descobrir novas peças.':'Los sommen goed op om nieuwe kledingstukken te ontdekken.',
+  'Comprar':'Kopen',
+  'Economizar':'Sparen',
+  'Nova!':'Nieuw!',
+  'Novos':'Nieuw',
+  'peças adquiridas':'kledingstukken verzameld',
+  'Como funciona?':'Hoe werkt het?',
+  'Acerte uma conta para ganhar uma estrelinha.':'Los een som goed op om een ster te verdienen.',
+  'Use suas estrelinhas para comprar as peças que você descobrir.':'Gebruik je sterren om kledingstukken te kopen die je ontdekt.',
+  'Toque em Continuar jogando para guardar suas estrelinhas.':'Tik op Verder spelen om je sterren te bewaren.',
+  'No guarda-roupa, toque em uma peça sua para vestir ou tirar.':'Tik in de kledingkast op een kledingstuk van jou om het aan of uit te trekken.',
+  'Precisa de ajuda com a conta? Toque na lâmpada.':'Hulp nodig bij de som? Tik op het lampje.',
+  'Entendi':'Begrepen',
+  'Relatório de aprendizagem':'Leerrapport',
+  'Últimos 7 dias':'Afgelopen 7 dagen',
+  'Taxa de acerto':'Percentage goed',
+  'Estrelinhas ganhas':'Verdiende sterren',
+  'Nenhuma tentativa registrada nos últimos 7 dias.':'Geen pogingen geregistreerd in de afgelopen 7 dagen.',
+  'Resultados por dia':'Resultaten per dag',
+  'Data':'Datum',
+  'Histórico diário':'Daggeschiedenis',
+  'Vestido azul de cristal':'Blauwe kristallen jurk',
+  'Vestido dourado de rosas':'Gouden rozenjurk',
+  'Vestido lilás bordado':'Geborduurde lila jurk',
+  'Vestido de pétalas verdes':'Jurk met groene bloemblaadjes',
+  'Vestido turquesa de pérolas':'Turkooizen pareljurk',
+  'Blusa azul de mangas rubi':'Blauwe blouse met robijnrode mouwen',
+  'Casaco azul bordado':'Geborduurd blauw jasje',
+  'Blusa turquesa com arabescos':'Turkooizen blouse met krullen',
+  'Blusa coral geométrica':'Koraalrode blouse met geometrisch patroon',
+  'Blusa rosa com gola branca':'Roze blouse met witte kraag',
+  'Calça balonê turquesa':'Turkooizen ballonbroek',
+  'Calça azul bordada':'Geborduurde blauwe broek',
+  'Short coral geométrico':'Koraalrode short met geometrisch patroon',
+  'Saia rosa com bordado floral':'Roze rok met bloemenborduursel',
+  'Saia dourada de baile':'Gouden balrok',
+  'Trança dourada com flores':'Gouden vlecht met bloemen',
+  'Tiara dourada com rosa':'Gouden haarband met roos',
+  'Presilha de flores lilás':'Haarspeld met lila bloemen',
+  'Tiara azul com estrela':'Blauwe haarband met ster',
+  'Sapatilhas azuis de laço':'Blauwe ballerina’s met strik',
+  'Sapatilhas douradas de rosa':'Gouden ballerina’s met roosjes',
+  'Já é sua':'Al van jou',
+  'Esta peça já é sua.':'Dit kledingstuk is al van jou.',
+  'Descubra esta peça jogando.':'Ontdek dit kledingstuk tijdens het spelen.',
+  'Peça surpresa':'Verrassingsstuk',
+  'Peças adquiridas':'Gekochte kledingstukken',
+  'Coleção de Natal':'Kerstcollectie',
+  'Coleção Princesas':'Prinsessencollectie',
+  'Guarde estrelinhas para comprar peças especiais!':'Spaar sterren voor speciale kledingstukken!',
+  'Não foi possível salvar o progresso. Tente de novo.':'Je voortgang kon niet worden opgeslagen. Probeer het opnieuw.'
+});
 const replacements=Object.entries(entries).sort((a,b)=>b[0].length-a[0].length);
 const unit={unidades:'eenheden',dezenas:'tientallen',centenas:'honderdtallen'};
 function nl(source){let t=source;
-t=t.replace(/Faltam? (\d+) estrelinhas? para esta peça\./g,(_,n)=>`Je hebt nog ${n} ${n==='1'?'ster':'sterren'} nodig voor dit kledingstuk.`)
-.replace(/(Saldo: |⭐ | · )(\d+) estrelinhas?\b/g,(_,prefix,n)=>`${prefix==='Saldo: '?'Beschikbaar: ':prefix}${n} ${n==='1'?'ster':'sterren'}`)
-.replace(/(\d+\/\d+) peças\b/g,'$1 kledingstukken');
+t=t.replace(/Faltam? (\d+) estrelinhas? para esta peça\./g,(_,amount)=>`Je hebt nog ${amount} ${amount === '1' ? 'ster' : 'sterren'} nodig voor dit kledingstuk.`)
+  .replace(/(\d+) estrelinhas?(?=\s|$)/g,(_,amount)=>`${amount} ${amount === '1' ? 'ster' : 'sterren'}`)
+  .replace(/(\d+\/\d+) peças\b/g,'$1 kledingstukken');
 // Full dynamic phrases are translated before reusable labels.
 t=t.replace(/Tabuada do (\d+)/g,'Tafel van $1').replace(/Pedir ajuda\. Saldo: (\d+)/g,'Om hulp vragen. Beschikbaar: $1').replace(/Acertos sem ajuda: (\d+) · Acertos com ajuda: (\d+) · Ajudas usadas: (\d+)/g,'Goed zonder hulp: $1 · Goed met hulp: $2 · Gebruikte hulpbeurten: $3');
 t=t.replace(/Uma descoberta na tabuada do (\d+)\./g,'Ontdek de tafel van $1.').replace(/Desafio (\d+)/g,'Oefening $1').replace(/\((\d+) peças\)/g,'($1 kledingstukken)').replace(/Conte as partes coloridas desta (pizza|torta)\./g,(_,f)=>`Tel de gekleurde delen van deze ${f==='torta'?'taart':'pizza'}.`).replace(/(pizza|torta) dividida em (\d+) partes iguais(?:, (\d+) coloridas)?/g,(_,f,d,n)=>`${f==='torta'?'Taart':'Pizza'} verdeeld in ${d} gelijke delen${n?`, waarvan ${n} gekleurd`:''}`)
